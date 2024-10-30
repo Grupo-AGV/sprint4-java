@@ -17,7 +17,7 @@ class VeiculoServiceImpl implements VeiculoService {
     public void create(Veiculo veiculo, Connection connection) throws SQLException, VeiculoExistente {
         veiculo.setPlaca(veiculo.getPlaca().replace("-", ""));
         if (dao.existsByPlaca(veiculo.getPlaca(), connection)) {
-            throw new VeiculoExistente("Veículo já cadastrado com essa placa.");
+            throw new VeiculoExistente("Veículo já cadastrado com essa licensePlate.");
         }
         dao.create(veiculo, connection);
     }

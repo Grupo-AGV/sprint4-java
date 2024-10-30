@@ -15,6 +15,14 @@ public class Veiculo {
     }
 
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public void setAnoLancamento(Integer ano_lancamento) {
         this.anoLancamento = ano_lancamento;
     }

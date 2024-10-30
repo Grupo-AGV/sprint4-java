@@ -1,10 +1,10 @@
 package com.penaestrada.dto;
 
 public record CriarClienteDto (
-        String nome,
+        String name,
         String cpf,
-        String dataNascimento,
+        String birthDate,
         LoginDto login,
-        CriarVeiculoDto veiculo
+        CriarVeiculoDto vehicle
 ) {
 }

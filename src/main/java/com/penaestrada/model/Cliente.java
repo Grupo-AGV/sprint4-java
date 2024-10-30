@@ -120,9 +120,9 @@ public class Cliente extends Usuario {
     public String toString() {
         return "Usuario{" +
                 "id=" + getId() +
-                ", nome='" + nome + '\'' +
+                ", name='" + nome + '\'' +
                 ", cpf='" + cpf + '\'' +
-                ", dataNascimento=" + dataNascimento +
+                ", birthDate=" + dataNascimento +
                 '}';
     }
 }

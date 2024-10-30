@@ -34,9 +34,9 @@ public class VeiculoDaoImpl implements VeiculoDao {
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, placa);
             ResultSet rs = pstmt.executeQuery();
-            return rs.next(); // Retorna true se existe um veículo com a placa fornecida
+            return rs.next(); // Retorna true se existe um veículo com a licensePlate fornecida
         } catch (SQLException e) {
-            throw new SQLException("Erro ao buscar veículo por placa", e);
+            throw new SQLException("Erro ao buscar veículo por licensePlate", e);
         }
     }
 
