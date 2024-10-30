@@ -1,5 +1,7 @@
 package com.penaestrada.dao;
 
+import com.penaestrada.infra.exceptions.ExclusaoVeiculoUnico;
+import com.penaestrada.infra.exceptions.VeiculoNotFound;
 import com.penaestrada.model.Veiculo;
 
 import java.sql.Connection;
@@ -12,7 +14,8 @@ public interface VeiculoDao {
 
     Boolean existsByPlaca(String placa, Connection connection) throws SQLException;
 
-    void deleteById(Long id, Connection connection) throws SQLException;
-
     List<Veiculo> findVeiculosByClienteId(Long id) throws SQLException;
+
+    void deleteByIdEClienteId(Long idCliente, Long idVeiculo) throws SQLException, VeiculoNotFound, ExclusaoVeiculoUnico;
+
 }

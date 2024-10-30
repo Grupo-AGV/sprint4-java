@@ -1,12 +1,18 @@
 package com.penaestrada.model;
 
 public class Peca {
+    private final Long id;
     private String nome;
     private final String modelo;
 
-    public Peca(String nome, String modelo) {
+    public Peca(Long id, String nome, String modelo) {
+        this.id = id;
         this.nome = nome;
         this.modelo = modelo;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getModelo() {

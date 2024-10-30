@@ -8,6 +8,7 @@ public record ClienteDashboardDto(
         String email,
         String cpf,
         String birthDate,
-        List<DetalhesVeiculo> vehicles
+        List<DetalhesVeiculo> vehicles,
+        List<DetalhesTelefone> contacts
 ) {
 }

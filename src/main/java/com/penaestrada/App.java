@@ -1,5 +1,6 @@
 package com.penaestrada;
 
+import com.penaestrada.infra.security.CorsFilter;
 import com.penaestrada.infra.security.SecurityFilter;
 import org.glassfish.jersey.server.ResourceConfig;
 
@@ -10,6 +11,7 @@ public class App extends ResourceConfig {
 
     public App() {
         packages("com.penaestrada");
+        register(CorsFilter.class);
         register(SecurityFilter.class);
     }
 }

@@ -3,7 +3,10 @@ package com.penaestrada.service;
 import com.penaestrada.config.DatabaseConnectionFactory;
 import com.penaestrada.dao.VeiculoDao;
 import com.penaestrada.dao.VeiculoDaoFactory;
+import com.penaestrada.infra.exceptions.ExclusaoVeiculoUnico;
 import com.penaestrada.infra.exceptions.VeiculoExistente;
+import com.penaestrada.infra.exceptions.VeiculoNotFound;
+import com.penaestrada.model.Cliente;
 import com.penaestrada.model.Veiculo;
 
 import java.sql.Connection;
@@ -29,6 +32,11 @@ class VeiculoServiceImpl implements VeiculoService {
     @Override
     public List<Veiculo> findVeiculosByClienteId(Long idCliente) throws SQLException {
         return dao.findVeiculosByClienteId(idCliente);
+    }
+
+    @Override
+    public void removerVeiculoDoCliente(Cliente cliente, Long id) throws SQLException, VeiculoNotFound, ExclusaoVeiculoUnico {
+        dao.deleteByIdEClienteId(cliente.getId(), id);
     }
 
     private void adicionarVeiculo(Veiculo veiculo, Connection connection) throws SQLException, VeiculoExistente {

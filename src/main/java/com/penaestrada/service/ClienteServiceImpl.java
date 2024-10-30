@@ -4,9 +4,11 @@ import com.penaestrada.config.DatabaseConnectionFactory;
 import com.penaestrada.dao.ClienteDao;
 import com.penaestrada.dao.ClienteDaoFactory;
 import com.penaestrada.dto.ClienteDashboardDto;
+import com.penaestrada.dto.DetalhesTelefone;
 import com.penaestrada.dto.DetalhesVeiculo;
 import com.penaestrada.infra.exceptions.*;
 import com.penaestrada.model.Cliente;
+import com.penaestrada.model.Telefone;
 import com.penaestrada.model.Veiculo;
 
 import java.sql.Connection;
@@ -20,6 +22,8 @@ class ClienteServiceImpl implements ClienteService {
     private final UsuarioService usuarioService = UsuarioServiceFactory.create();
 
     private final VeiculoService veiculoService = VeiculoServiceFactory.create();
+
+    private final TelefoneService telefoneService = TelefoneServiceFactory.create();
 
     @Override
     public void create(Cliente cliente) throws SQLException, CpfExistente, EmailExistente, VeiculoExistente {
@@ -47,12 +51,14 @@ class ClienteServiceImpl implements ClienteService {
         if (cliente == null)
             throw new ClienteNotFound();
         List<Veiculo> veiculos = veiculoService.findVeiculosByClienteId(cliente.getId());
+        List<Telefone> contatos = telefoneService.buscarTelefonesPorUsuario(cliente);
         return new ClienteDashboardDto(
                 cliente.getId(), cliente.getNome(), cliente.getEmail(),
                 cliente.getCpf(), cliente.getDataNascimento().toString(),
                 veiculos.stream().map(v -> new DetalhesVeiculo(
                         v.getId(), v.getMarca(), v.getModelo(),
-                        v.getAnoLancamento().toString(), v.getPlaca())).toList()
+                        v.getAnoLancamento().toString(), v.getPlaca())).toList(),
+                contatos.stream().map(t -> new DetalhesTelefone(t.getId(), t.getNumeroCompleto())).toList()
         );
     }
 }

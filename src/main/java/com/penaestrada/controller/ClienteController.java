@@ -26,6 +26,7 @@ public class ClienteController {
     private final UsuarioService usuarioService = UsuarioServiceFactory.create();
     private final VeiculoService veiculoService = VeiculoServiceFactory.create();
     private final TokenService tokenService = TokenServiceFactory.create();
+    private final TelefoneService telefoneService = TelefoneServiceFactory.create();
 
     @POST
     @Path("/signup")
@@ -90,4 +91,25 @@ public class ClienteController {
         }
     }
 
+    @DELETE
+    @Path("/vehicle")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteVehicle(@CookieParam("pe_access_token") String token, @QueryParam("id") Long id) {
+        if (id == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("error", "Id do veículo não informado")).build();
+        }
+        try {
+            String login = tokenService.getSubject(token);
+            Cliente cliente = (Cliente) usuarioService.findByLogin(login);
+            veiculoService.removerVeiculoDoCliente(cliente, id);
+            return Response.status(Response.Status.NO_CONTENT).build();
+        } catch (VeiculoNotFound e) {
+            return Response.status(Response.Status.NOT_FOUND).entity(Map.of("error", e.getMessage())).build();
+        } catch (ExclusaoVeiculoUnico e) {
+            return Response.status(Response.Status.CONFLICT).entity(Map.of("error", "Você não pode excluir seu uníco veículo.")).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(Map.of("error", e.getMessage())).build();
+        }
+    }
 }

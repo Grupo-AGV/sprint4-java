@@ -16,7 +16,16 @@ public class Telefone {
     }
 
     public String getNumeroCompleto() {
-        return String.format("+%d(%d)%d", getDdi(), getDdd(), getNumero());
+        String numeroFormatado;
+        String numero = String.valueOf(getNumero());
+        if (numero.length() == 9) {
+            numeroFormatado = numero.substring(0, 5) + "-" + numero.substring(5);
+        } else if (numero.length() == 8) {
+            numeroFormatado = numero.substring(0, 4) + "-" + numero.substring(4);
+        } else {
+            numeroFormatado = numero;
+        }
+        return String.format("+%d (%d) %s", getDdi(), getDdd(), numeroFormatado);
     }
 
     public Long getId() {
@@ -25,6 +34,14 @@ public class Telefone {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public Integer getDdi() {
