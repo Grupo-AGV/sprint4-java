@@ -1,22 +1,29 @@
 package com.penaestrada.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Oficina extends Usuario {
     private Long idOficina;
     private String nome;
     private String razaoSocial;
-    private Integer numeroLogradouro;
-    private String complementoNumero;
-    private String pontoReferencia;
+    private Double avaliacao;
+    private String urlMaps;
     private Character status;
+
+    List<Endereco> enderecos = new ArrayList<>();
+    List<Telefone> telefones = new ArrayList<>();
 
     public Oficina(String email, String senha, Cargo cargo) {
         super(email, senha, cargo);
     }
 
-    public Oficina(String nome, String razaoSocial, Character status, String email, String senha, Cargo cargo) {
+    public Oficina(String nome, String razaoSocial, Double avaliacao, String urlMaps, Character status, String email, String senha, Cargo cargo) {
         super(email, senha, cargo);
         this.nome = nome;
         this.razaoSocial = razaoSocial;
+        this.avaliacao = avaliacao;
+        this.urlMaps = urlMaps;
         this.status = status;
     }
 
@@ -32,49 +39,29 @@ public class Oficina extends Usuario {
         return nome;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
     public String getRazaoSocial() {
         return razaoSocial;
     }
 
-    public void setRazaoSocial(String razaoSocial) {
-        this.razaoSocial = razaoSocial;
+    public Double getAvaliacao() {
+        return avaliacao;
     }
 
-    public Integer getNumeroLogradouro() {
-        return numeroLogradouro;
-    }
 
-    public void setNumeroLogradouro(Integer numeroLogradouro) {
-        this.numeroLogradouro = numeroLogradouro;
-    }
-
-    public String getComplementoNumero() {
-        return complementoNumero;
-    }
-
-    public void setComplementoNumero(String complementoNumero) {
-        this.complementoNumero = complementoNumero;
-    }
-
-    public String getPontoReferencia() {
-        return pontoReferencia;
-    }
-
-    public void setPontoReferencia(String pontoReferencia) {
-        this.pontoReferencia = pontoReferencia;
+    public String getUrlMaps() {
+        return urlMaps;
     }
 
     public Character getStatus() {
         return status;
     }
 
-    public void setStatus(Character status) {
-        this.status = status;
+
+    public List<Endereco> getEnderecos() {
+        return enderecos;
     }
 
-
+    public List<Telefone> getTelefones() {
+        return telefones;
+    }
 }

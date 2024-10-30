@@ -5,16 +5,17 @@ import com.penaestrada.infra.exceptions.TelefoneNotFound;
 import com.penaestrada.model.Telefone;
 import com.penaestrada.model.Usuario;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
 public interface TelefoneDao {
 
-        void create(Telefone telefone) throws SQLException;
+        void create(Telefone telefone, Connection connection) throws SQLException;
 
-        List<Telefone> findAll(Usuario usuario);
+        List<Telefone> findAll(Usuario usuario) throws SQLException;
 
-        void update(Telefone telefone);
+        void update(Telefone telefone) throws SQLException;
 
         void deleteByIdEUsuarioId(Long idCliente, Long idTelefone) throws SQLException, ExclusaoTelefoneUnico, TelefoneNotFound;
 }

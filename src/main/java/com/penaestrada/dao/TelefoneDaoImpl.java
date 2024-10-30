@@ -2,12 +2,9 @@ package com.penaestrada.dao;
 
 import com.penaestrada.config.DatabaseConnectionFactory;
 import com.penaestrada.infra.exceptions.ExclusaoTelefoneUnico;
-import com.penaestrada.infra.exceptions.ExclusaoVeiculoUnico;
 import com.penaestrada.infra.exceptions.TelefoneNotFound;
-import com.penaestrada.infra.exceptions.VeiculoNotFound;
 import com.penaestrada.model.Telefone;
 import com.penaestrada.model.Usuario;
-import com.penaestrada.model.Veiculo;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,22 +16,18 @@ import java.util.List;
 class TelefoneDaoImpl implements TelefoneDao {
 
     @Override
-    public void create(Telefone telefone) throws SQLException {
+    public void create(Telefone telefone, Connection connection) throws SQLException {
         String sql = "INSERT INTO t_pe_telefone (id_usuario, nr_ddi, nr_ddd, nr_telefone) VALUES (?, ?, ?, ?)";
-        try (Connection connection = DatabaseConnectionFactory.create()) {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setLong(1, telefone.getUsuario().getId());
-            preparedStatement.setInt(2, telefone.getDdi());
-            preparedStatement.setInt(3, telefone.getDdd());
-            preparedStatement.setInt(4, telefone.getNumero());
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.setLong(1, telefone.getUsuario().getId());
+        preparedStatement.setInt(2, telefone.getDdi());
+        preparedStatement.setInt(3, telefone.getDdd());
+        preparedStatement.setInt(4, telefone.getNumero());
+        preparedStatement.executeUpdate();
     }
 
     @Override
-    public List<Telefone> findAll(Usuario usuario) {
+    public List<Telefone> findAll(Usuario usuario) throws SQLException {
         List<Telefone> resultado = new ArrayList<>();
         String sql = "SELECT * FROM t_pe_telefone WHERE id_usuario = ?";
         try (Connection connection = DatabaseConnectionFactory.create()) {
@@ -49,13 +42,13 @@ class TelefoneDaoImpl implements TelefoneDao {
                 resultado.add(veiculo);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw e;
         }
         return resultado;
     }
 
     @Override
-    public void update(Telefone telefone) {
+    public void update(Telefone telefone) throws SQLException {
         String sql = "UPDATE t_pe_telefone SET nr_ddi = ?, nr_ddd = ?, nr_telefone = ? WHERE id_telefone = ? AND id_usuario = ?";
         try (Connection connection = DatabaseConnectionFactory.create()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -66,7 +59,7 @@ class TelefoneDaoImpl implements TelefoneDao {
             preparedStatement.setLong(5, telefone.getUsuario().getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw e;
         }
     }
 

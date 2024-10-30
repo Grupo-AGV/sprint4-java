@@ -32,7 +32,7 @@ public class TelefoneController {
         try {
             String login = tokenService.getSubject(token);
             Usuario usuario = usuarioService.findByLogin(login);
-            telefoneService.criarTelefone(usuario, dto);
+            telefoneService.adicionarTelefone(usuario, dto);
             return Response.status(Response.Status.CREATED).build();
         } catch (LoginNotFound e) {
             return Response.status(Response.Status.NOT_FOUND).entity(Map.of("error", e.getMessage())).build();
