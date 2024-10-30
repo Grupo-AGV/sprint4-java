@@ -6,7 +6,7 @@ import com.penaestrada.model.Usuario;
 import java.sql.*;
 import java.util.List;
 
-public class TelefoneDaoImpl implements TelefoneDao {
+class TelefoneDaoImpl implements TelefoneDao {
 
     @Override
     public void create(Telefone telefone, Connection connection) {

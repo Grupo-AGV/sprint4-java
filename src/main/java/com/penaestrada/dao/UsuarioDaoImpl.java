@@ -1,6 +1,5 @@
 package com.penaestrada.dao;
 
-import com.penaestrada.config.DatabaseConnectionFactory;
 import com.penaestrada.infra.exceptions.LoginNotFound;
 import com.penaestrada.model.Cargo;
 import com.penaestrada.model.Cliente;
@@ -10,7 +9,7 @@ import oracle.jdbc.OracleType;
 
 import java.sql.*;
 
-public class UsuarioDaoImpl implements UsuarioDao {
+class UsuarioDaoImpl implements UsuarioDao {
 
     @Override
     public void create(Usuario usuario, Connection connection) throws SQLException {
@@ -44,9 +43,13 @@ public class UsuarioDaoImpl implements UsuarioDao {
             if (rs.next()) {
                 String cargo = rs.getString("ds_cargo");
                 if (Cargo.CLIENTE.getDescricao().equals(cargo)) {
-                    return new Cliente(null, rs.getString("ds_senha"), Cargo.valueOf(cargo));
+                    Cliente cliente = new Cliente(null, rs.getString("ds_senha"), Cargo.valueOf(cargo));
+                    cliente.setId(rs.getLong("id_usuario"));
+                    return cliente;
                 } else if (Cargo.OFICINA.getDescricao().equals(cargo)) {
-                    return new Oficina(null, rs.getString("ds_senha"), Cargo.valueOf(cargo));
+                    Oficina oficina = new Oficina(null, rs.getString("ds_senha"), Cargo.valueOf(cargo));
+                    oficina.setId(rs.getLong("id_usuario"));
+                    return oficina;
                 }
             }
             throw new LoginNotFound("Login não encontrado");

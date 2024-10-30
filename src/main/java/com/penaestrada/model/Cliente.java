@@ -12,6 +12,8 @@ public class Cliente extends Usuario {
     private String cpf;
     private LocalDate dataNascimento;
 
+    private List<Veiculo> veiculos = new ArrayList<>();
+
     public Cliente(String email, String senha, Cargo cargo) {
         super(email, senha, cargo);
     }
@@ -114,6 +116,14 @@ public class Cliente extends Usuario {
 
     public LocalDate getDataNascimento() {
         return dataNascimento;
+    }
+
+    public List<Veiculo> getVeiculos() {
+        return veiculos;
+    }
+
+    public void setVeiculos(List<Veiculo> veiculos) {
+        this.veiculos = veiculos;
     }
 
     @Override

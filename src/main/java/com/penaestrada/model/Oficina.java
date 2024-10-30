@@ -1,6 +1,7 @@
 package com.penaestrada.model;
 
 public class Oficina extends Usuario {
+    private Long idOficina;
     private String nome;
     private String razaoSocial;
     private Integer numeroLogradouro;
@@ -17,6 +18,14 @@ public class Oficina extends Usuario {
         this.nome = nome;
         this.razaoSocial = razaoSocial;
         this.status = status;
+    }
+
+    public Long getIdOficina() {
+        return idOficina;
+    }
+
+    public void setIdOficina(Long idOficina) {
+        this.idOficina = idOficina;
     }
 
     public String getNome() {

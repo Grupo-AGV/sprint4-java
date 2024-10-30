@@ -12,8 +12,8 @@ public interface UsuarioService {
 
     void create(Usuario usuario, Connection connection) throws SQLException, EmailExistente;
 
-    Usuario logarUsuario(String email, String senha) throws SQLException, LoginInvalido;
+    Usuario logarUsuario(String email, String senha) throws SQLException, LoginInvalido, LoginNotFound;
 
-    Usuario findByLogin(String email, Connection connection) throws SQLException, LoginNotFound;
+    Usuario findByLogin(String email) throws SQLException, LoginNotFound;
 
 }

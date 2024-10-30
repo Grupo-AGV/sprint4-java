@@ -1,14 +1,17 @@
 package com.penaestrada.dao;
 
 import com.penaestrada.config.DatabaseConnectionFactory;
+import com.penaestrada.model.Cliente;
 import com.penaestrada.model.Veiculo;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class VeiculoDaoImpl implements VeiculoDao {
+class VeiculoDaoImpl implements VeiculoDao {
 
 
     @Override
@@ -38,6 +41,31 @@ public class VeiculoDaoImpl implements VeiculoDao {
         } catch (SQLException e) {
             throw new SQLException("Erro ao buscar veículo por licensePlate", e);
         }
+    }
+
+    @Override
+    public List<Veiculo> findVeiculosByClienteId(Long id) {
+        List<Veiculo> resultado = new ArrayList<>();
+        String sql = "SELECT id_veiculo, ds_marca, ds_modelo, nr_ano_lancamento, ds_placa FROM t_pe_veiculo WHERE id_usuario = ?  ORDER BY id_veiculo DESC";
+        try (Connection connection = DatabaseConnectionFactory.create()) {
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setLong(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Veiculo veiculo = new Veiculo(
+                        null,
+                        rs.getString("ds_marca"),
+                        rs.getString("ds_modelo"),
+                        rs.getString("ds_placa"),
+                        rs.getInt("nr_ano_lancamento")
+                );
+                veiculo.setId(rs.getLong("id_veiculo"));
+                resultado.add(veiculo);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar veículos por cliente");
+        }
+        return resultado;
     }
 
     @Override

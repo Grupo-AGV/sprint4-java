@@ -2,7 +2,7 @@ package com.penaestrada.service;
 
 import com.penaestrada.config.DatabaseConnectionFactory;
 import com.penaestrada.dao.UsuarioDao;
-import com.penaestrada.dao.UsuarioDaoImpl;
+import com.penaestrada.dao.UsuarioDaoFactory;
 import com.penaestrada.infra.exceptions.EmailExistente;
 import com.penaestrada.infra.exceptions.LoginInvalido;
 import com.penaestrada.infra.exceptions.LoginNotFound;
@@ -15,7 +15,7 @@ import java.sql.SQLException;
 
 class UsuarioServiceImpl implements UsuarioService {
 
-    private final UsuarioDao dao = new UsuarioDaoImpl();
+    private final UsuarioDao dao = UsuarioDaoFactory.create();
 
     @Override
     public void create(Usuario usuario, Connection connection) throws SQLException, EmailExistente {
@@ -35,28 +35,19 @@ class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public Usuario logarUsuario(String email, String senha) throws SQLException, LoginInvalido {
+    public Usuario logarUsuario(String email, String senha) throws SQLException, LoginInvalido, LoginNotFound {
         try (Connection connection = DatabaseConnectionFactory.create()){
             Usuario usuario = dao.findByEmail(email, connection);
             if (usuario != null && BCrypt.checkpw(senha, usuario.getSenha()))
                 return usuario;
 
             throw new LoginInvalido("Usuário ou senha inválidos. Verifique suas credênciais.");
-        } catch (SQLException e) {
-            throw new SQLException("Falha ao conectar com o banco de dados", e.getMessage());
-        } catch (LoginInvalido | LoginNotFound e) {
-            throw new LoginInvalido("Usuário ou senha inválidos. Verifique suas credênciais.");
         }
     }
 
     @Override
-    public Usuario findByLogin(String email, Connection connection) throws SQLException, LoginNotFound {
-        try {
-            return dao.findByEmail(email, connection);
-        } catch (SQLException e) {
-            throw new SQLException("Falha ao conectar com o banco de dados", e.getMessage());
-        } catch (LoginNotFound e) {
-            throw new LoginNotFound(e.getMessage());
-        }
+    public Usuario findByLogin(String email) throws SQLException, LoginNotFound {
+        Connection connection = DatabaseConnectionFactory.create();
+        return dao.findByEmail(email, connection);
     }
 }

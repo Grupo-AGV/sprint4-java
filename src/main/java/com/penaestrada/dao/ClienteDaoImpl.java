@@ -1,6 +1,5 @@
 package com.penaestrada.dao;
 
-import com.penaestrada.config.DatabaseConnectionFactory;
 import com.penaestrada.infra.exceptions.CpfInvalido;
 import com.penaestrada.model.Cargo;
 import com.penaestrada.model.Cliente;
@@ -13,7 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClienteDaoImpl implements ClienteDao {
+class ClienteDaoImpl implements ClienteDao {
 
     @Override
     public void create(Cliente cliente, Connection connection) throws SQLException {
@@ -42,7 +41,7 @@ public class ClienteDaoImpl implements ClienteDao {
 
     @Override
     public Cliente findByLogin(String login, Connection connection) throws CpfInvalido, SQLException {
-        String sql = "SELECT c.id_usuario, c.nm_usuario, u.ds_email, c.nr_cpf, c.dt_nascimento FROM t_pe_cliente c LEFT JOIN t_pe_usuario u ON c.id_usuario = u.id_usuario AND u.ds_email = ?";
+        String sql = "SELECT c.id_usuario, c.nm_usuario, u.ds_email, c.nr_cpf, c.dt_nascimento FROM t_pe_cliente c INNER JOIN t_pe_usuario u ON c.id_usuario = u.id_usuario AND u.ds_email = ?";
         try {
             PreparedStatement pstmt = connection.prepareStatement(sql);
             pstmt.setString(1, login);
@@ -65,30 +64,5 @@ public class ClienteDaoImpl implements ClienteDao {
         } catch (CpfInvalido e) {
             throw new CpfInvalido("CPF inválido");
         }
-    }
-
-    @Override
-    public List<Veiculo> findVeiculosByCliente(Cliente cliente, Connection connection) {
-        List<Veiculo> resultado = new ArrayList<>();
-        String sql = "SELECT id_veiculo, ds_marca, ds_modelo, nr_ano_lancamento, ds_placa FROM t_pe_veiculo WHERE id_usuario = ?";
-        try {
-            PreparedStatement pstmt = connection.prepareStatement(sql);
-            pstmt.setLong(1, cliente.getId());
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                Veiculo veiculo = new Veiculo(
-                        null,
-                        rs.getString("ds_marca"),
-                        rs.getString("ds_modelo"),
-                        rs.getString("ds_placa"),
-                        rs.getInt("nr_ano_lancamento")
-                );
-                veiculo.setId(rs.getLong("id_veiculo"));
-                resultado.add(veiculo);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao buscar veículos por cliente");
-        }
-        return resultado;
     }
 }

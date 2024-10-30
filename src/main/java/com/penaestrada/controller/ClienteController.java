@@ -32,21 +32,17 @@ public class ClienteController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response create(CriarClienteDto dto) {
-        try (Connection connection = DatabaseConnectionFactory.create()) {
-            connection.setAutoCommit(false);
+        try {
             Cliente cliente = new Cliente(dto.name(), dto.cpf(), dto.birthDate(), dto.login().email(), dto.login().password(), Cargo.CLIENTE);
-            usuarioService.create(cliente, connection);
-            clienteService.create(cliente, connection);
-
             CriarVeiculoDto veiculoDto = dto.vehicle();
             Veiculo veiculo = new Veiculo(cliente, veiculoDto.brand(), veiculoDto.model(), veiculoDto.licensePlate(), Integer.valueOf(veiculoDto.year()));
-            veiculoService.create(veiculo, connection);
-            System.out.println("VEÍCULO CADASTRADO");
-
-            connection.commit();
+            cliente.getVeiculos().add(veiculo);
+            clienteService.create(cliente);
             return Response.status(Response.Status.CREATED).build();
-        } catch (EmailExistente | VeiculoExistente | CpfInvalido | CpfExistente e) {
+        } catch (EmailExistente | VeiculoExistente | CpfExistente e) {
             return Response.status(Response.Status.CONFLICT).entity(Map.of("error", e.getMessage())).build();
+        } catch (CpfInvalido e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("error", e.getMessage())).build();
         } catch (Exception e) {
             try (Connection connection = DatabaseConnectionFactory.create()) {
                 connection.rollback();
@@ -63,11 +59,11 @@ public class ClienteController {
     @Path("/dashboard")
     @Produces(MediaType.APPLICATION_JSON)
     public Response dashboard(@CookieParam("pe_access_token") String token) {
-        try (Connection connection = DatabaseConnectionFactory.create()) {
+        try {
             String login = tokenService.getSubject(token);
-            ClienteDashboardDto dashboard = clienteService.dashboard(login, connection);
+            ClienteDashboardDto dashboard = clienteService.dashboard(login);
             return Response.ok().entity(dashboard).build();
-        } catch (ClienteNotFound | CpfInvalido e) {
+        } catch (ClienteNotFound e) {
             return Response.status(Response.Status.NOT_FOUND).entity(Map.of("error", e.getMessage())).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -80,22 +76,15 @@ public class ClienteController {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createVehicle(@CookieParam("pe_access_token") String token, CriarVeiculoDto dto) {
-        try (Connection connection = DatabaseConnectionFactory.create()) {
+        try {
             String login = tokenService.getSubject(token);
-            Cliente cliente = (Cliente) usuarioService.findByLogin(login, connection);
+            Cliente cliente = (Cliente) usuarioService.findByLogin(login);
             Veiculo veiculo = new Veiculo(cliente, dto.brand(), dto.model(), dto.licensePlate(), Integer.valueOf(dto.year()));
-            veiculoService.create(veiculo, connection);
-            connection.commit();
+            veiculoService.adionarVeiculoAoCliente(veiculo);
             return Response.status(Response.Status.CREATED).build();
         } catch (VeiculoExistente e) {
             return Response.status(Response.Status.CONFLICT).entity(Map.of("error", e.getMessage())).build();
         } catch (Exception e) {
-            try (Connection connection = DatabaseConnectionFactory.create()) {
-                connection.rollback();
-            } catch (SQLException ex) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .entity(Map.of("error", "Erro ao realizar rollback")).build();
-            }
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(Map.of("error", e.getMessage())).build();
         }

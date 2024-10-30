@@ -2,6 +2,7 @@ package com.penaestrada.controller;
 
 import com.penaestrada.dto.LoginDto;
 import com.penaestrada.infra.exceptions.LoginInvalido;
+import com.penaestrada.infra.exceptions.LoginNotFound;
 import com.penaestrada.model.Usuario;
 import com.penaestrada.service.UsuarioService;
 import com.penaestrada.service.UsuarioServiceFactory;
@@ -34,6 +35,8 @@ public class AutenticacaoController {
             return Response.status(Response.Status.OK).entity(Map.of("token", token)).cookie(cookie).build();
         } catch (LoginInvalido e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(Map.of("error", e.getMessage())).build();
+        } catch (LoginNotFound e) {
+            return Response.status(Response.Status.NOT_FOUND).entity(Map.of("error", e.getMessage())).build();
         } catch (SQLException e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Map.of("error", e.getMessage())).build();
         }

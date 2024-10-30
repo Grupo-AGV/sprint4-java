@@ -16,5 +16,4 @@ public interface ClienteDao {
 
     Cliente findByLogin(String login, Connection connection) throws CpfInvalido, SQLException;
 
-    List<Veiculo> findVeiculosByCliente(Cliente cliente, Connection connection);
 }
