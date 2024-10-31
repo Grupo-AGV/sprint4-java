@@ -26,7 +26,6 @@ public class TelefoneController {
     private final TelefoneService telefoneService = TelefoneServiceFactory.create();
 
     @POST
-    @Path("")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response criarTelefone(@CookieParam(CookieName.TOKEN) String token, CriarTelefoneDto dto) {
@@ -44,7 +43,6 @@ public class TelefoneController {
     }
 
     @PUT
-    @Path("")
     @Produces(MediaType.APPLICATION_JSON)
     public Response atualizarTelefone(@CookieParam(CookieName.TOKEN) String token, @QueryParam("id") Long id, CriarTelefoneDto dto) {
         if (id == null) {
@@ -64,7 +62,6 @@ public class TelefoneController {
     }
 
     @DELETE
-    @Path("")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deletarTelefone(@CookieParam(CookieName.TOKEN) String token, @QueryParam("id") Long id) {
         if (id == null) {

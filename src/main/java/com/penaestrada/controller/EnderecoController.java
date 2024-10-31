@@ -26,7 +26,6 @@ public class EnderecoController {
     private EnderecoService enderecoService = EnderecoServiceFactory.create();
 
     @POST
-    @Path("")
     public Response criarEndereco(@CookieParam(CookieName.TOKEN) String token, CriarEnderecoDto dto) {
         try {
             String login = tokenService.getSubject(token);
@@ -42,7 +41,6 @@ public class EnderecoController {
     }
 
     @GET
-    @Path("")
     @Produces(MediaType.APPLICATION_JSON)
     public Response listarTodosOsEnderecos(@CookieParam(CookieName.TOKEN) String token) {
         try {

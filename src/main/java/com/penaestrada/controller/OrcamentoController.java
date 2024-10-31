@@ -31,7 +31,6 @@ public class OrcamentoController {
     private final UsuarioService usuarioService = UsuarioServiceFactory.create();
 
     @POST
-    @Path("")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response agendarOrcamento(@CookieParam(CookieName.TOKEN) String token, CriarOrcamentoDto dto)    {
