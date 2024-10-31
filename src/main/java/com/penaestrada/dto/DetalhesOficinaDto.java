@@ -2,12 +2,12 @@ package com.penaestrada.dto;
 
 import java.util.List;
 
-public record DetalhesOficina(
+public record DetalhesOficinaDto(
         Long id,
         String name,
-        List<DetalhesEndereco> addresses,
+        List<DetalhesEnderecoDto> addresses,
         Double rating,
         String mapsUrl,
-        List<DetalhesTelefone> contacts
+        List<DetalhesTelefoneDto> contacts
 ) {
 }

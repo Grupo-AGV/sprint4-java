@@ -1,7 +1,7 @@
 package com.penaestrada.service;
 
-import com.penaestrada.dto.CriarOficina;
-import com.penaestrada.dto.DetalhesOficina;
+import com.penaestrada.dto.CriarOficinaDto;
+import com.penaestrada.dto.DetalhesOficinaDto;
 import com.penaestrada.infra.exceptions.EmailExistente;
 import com.penaestrada.infra.security.OficinaNotFound;
 import com.penaestrada.model.Oficina;
@@ -13,11 +13,11 @@ import java.util.List;
 
 public interface OficinaService {
 
-    void create(CriarOficina dto) throws SQLException, EmailExistente;
+    void create(CriarOficinaDto dto) throws SQLException, EmailExistente;
 
-    List<DetalhesOficina> listarOficinas() throws SQLException;
+    List<DetalhesOficinaDto> listarOficinas() throws SQLException;
 
-    DetalhesOficina detalhesOficinaPorUsuario(Usuario usuario) throws SQLException;
+    DetalhesOficinaDto detalhesOficinaPorUsuario(Usuario usuario) throws SQLException;
 
     Oficina findById(Long id, Connection connection) throws SQLException, OficinaNotFound;
 }

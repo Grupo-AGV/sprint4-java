@@ -1,6 +1,6 @@
 package com.penaestrada.dto;
 
-public record DetalhesTelefone(
+public record DetalhesTelefoneDto(
         Long id,
         String numero
 ) {

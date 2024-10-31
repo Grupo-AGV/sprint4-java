@@ -1,6 +1,6 @@
 package com.penaestrada.controller;
 
-import com.penaestrada.dto.CriarTelefone;
+import com.penaestrada.dto.CriarTelefoneDto;
 import com.penaestrada.infra.CookieName;
 import com.penaestrada.infra.exceptions.ExclusaoTelefoneUnico;
 import com.penaestrada.infra.exceptions.LoginNotFound;
@@ -29,7 +29,7 @@ public class TelefoneController {
     @Path("")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response criarTelefone(@CookieParam(CookieName.TOKEN) String token, CriarTelefone dto) {
+    public Response criarTelefone(@CookieParam(CookieName.TOKEN) String token, CriarTelefoneDto dto) {
         try {
             String login = tokenService.getSubject(token);
             Usuario usuario = usuarioService.findByLogin(login);
@@ -46,7 +46,7 @@ public class TelefoneController {
     @PUT
     @Path("")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response atualizarTelefone(@CookieParam(CookieName.TOKEN) String token, @QueryParam("id") Long id, CriarTelefone dto) {
+    public Response atualizarTelefone(@CookieParam(CookieName.TOKEN) String token, @QueryParam("id") Long id, CriarTelefoneDto dto) {
         if (id == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("error", "Id do telefone não informado.")).build();
         }

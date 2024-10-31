@@ -12,7 +12,6 @@ public class Orcamento {
     private String diagnosticoInicial;
     private LocalDateTime dataAgendamento, dataCriacao, dataFinalizacao;
     private Double valorFinal;
-    private Double valorTotal;
 
     private List<Diagnostico> diagnosticos = new ArrayList<>();
 
@@ -26,6 +25,15 @@ public class Orcamento {
         } else {
             throw new OficinaDesativada("Esta oficina esta desativada ou indisponível para reparos!");
         }
+    }
+
+    public Orcamento(Veiculo veiculo, String diagnosticoInicial, LocalDateTime dataAgendamento, LocalDateTime dataCriacao, LocalDateTime dataFinalizacao, Double valorFinal) {
+        this.veiculo = veiculo;
+        this.diagnosticoInicial = diagnosticoInicial;
+        this.dataAgendamento = dataAgendamento;
+        this.dataCriacao = dataCriacao;
+        this.dataFinalizacao = dataFinalizacao;
+        this.valorFinal = valorFinal;
     }
 
     private boolean isOficinaAtiva(Oficina oficina) {
@@ -90,14 +98,6 @@ public class Orcamento {
 
     public void setValorFinal(Double valorFinal) {
         this.valorFinal = valorFinal;
-    }
-
-    public Double getValorTotal() {
-        return valorTotal;
-    }
-
-    public void setValorTotal(Double valorTotal) {
-        this.valorTotal = valorTotal;
     }
 
     public List<Diagnostico> getDiagnosticos() {

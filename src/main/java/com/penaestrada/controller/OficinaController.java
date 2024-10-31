@@ -1,8 +1,7 @@
 package com.penaestrada.controller;
 
-import com.penaestrada.config.DatabaseConnectionFactory;
-import com.penaestrada.dto.CriarOficina;
-import com.penaestrada.dto.DetalhesOficina;
+import com.penaestrada.dto.CriarOficinaDto;
+import com.penaestrada.dto.DetalhesOficinaDto;
 import com.penaestrada.infra.CookieName;
 import com.penaestrada.infra.exceptions.EmailExistente;
 import com.penaestrada.infra.exceptions.LoginNotFound;
@@ -17,7 +16,6 @@ import com.penaestrada.service.security.TokenServiceFactory;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -33,22 +31,16 @@ public class OficinaController {
     @Path("/signup")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response criarOficina(CriarOficina dto) {
+    public Response criarOficina(CriarOficinaDto dto) {
         try {
             oficinaService.create(dto);
+            return Response.status(Response.Status.CREATED).build();
         } catch (EmailExistente e) {
             return Response.status(Response.Status.CONFLICT).entity(Map.of("error", e.getMessage())).build();
         } catch (Exception e) {
-            try (Connection connection = DatabaseConnectionFactory.create()) {
-                connection.rollback();
-            } catch (SQLException ex) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                        .entity(Map.of("error", "Erro ao realizar rollback")).build();
-            }
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(Map.of("error", e.getMessage())).build();
         }
-        return Response.status(Response.Status.CREATED).build();
     }
 
     @GET
@@ -56,7 +48,7 @@ public class OficinaController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response listarOficinas() {
         try {
-            List<DetalhesOficina> oficinas = oficinaService.listarOficinas();
+            List<DetalhesOficinaDto> oficinas = oficinaService.listarOficinas();
             return Response.ok(oficinas).build();
         } catch (SQLException e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -75,7 +67,7 @@ public class OficinaController {
             }
             String login = tokenService.getSubject(token);
             Usuario usuario = usuarioService.findByLogin(login);
-            DetalhesOficina oficina = oficinaService.detalhesOficinaPorUsuario(usuario);
+            DetalhesOficinaDto oficina = oficinaService.detalhesOficinaPorUsuario(usuario);
             return Response.ok(oficina).build();
         } catch (LoginNotFound e) {
             return Response.status(Response.Status.NOT_FOUND).entity(Map.of("error", e.getMessage())).build();

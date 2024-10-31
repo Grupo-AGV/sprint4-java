@@ -1,12 +1,12 @@
 package com.penaestrada.dto;
 
-public record CriarOficina(
+public record CriarOficinaDto(
         String name,
         String legalName,
-        CriarEndereco address,
+        CriarEnderecoDto address,
         Double rating,
         String mapsUrl,
         LoginDto login,
-        CriarTelefone contact
+        CriarTelefoneDto contact
 ) {
 }

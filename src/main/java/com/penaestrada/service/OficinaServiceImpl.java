@@ -3,13 +3,11 @@ package com.penaestrada.service;
 import com.penaestrada.config.DatabaseConnectionFactory;
 import com.penaestrada.dao.OficinaDao;
 import com.penaestrada.dao.OficinaDaoFactory;
-import com.penaestrada.dto.CriarEndereco;
-import com.penaestrada.dto.CriarOficina;
-import com.penaestrada.dto.DetalhesOficina;
+import com.penaestrada.dto.CriarOficinaDto;
+import com.penaestrada.dto.DetalhesOficinaDto;
 import com.penaestrada.infra.exceptions.EmailExistente;
 import com.penaestrada.infra.security.OficinaNotFound;
 import com.penaestrada.model.Cargo;
-import com.penaestrada.model.Endereco;
 import com.penaestrada.model.Oficina;
 import com.penaestrada.model.Usuario;
 
@@ -26,7 +24,7 @@ class OficinaServiceImpl implements OficinaService {
     private final TelefoneService telefoneService = TelefoneServiceFactory.create();
 
     @Override
-    public void create(CriarOficina dto) throws SQLException, EmailExistente {
+    public void create(CriarOficinaDto dto) throws SQLException, EmailExistente {
         Connection connection = DatabaseConnectionFactory.create();
         try {
             Oficina oficina = new Oficina(dto.name(), dto.legalName(), dto.rating(), dto.mapsUrl(), 'A', dto.login().email(), dto.login().password(), Cargo.OFICINA);
@@ -45,14 +43,14 @@ class OficinaServiceImpl implements OficinaService {
     }
 
     @Override
-    public List<DetalhesOficina> listarOficinas() throws SQLException {
+    public List<DetalhesOficinaDto> listarOficinas() throws SQLException {
         List<Oficina> oficinas = dao.findAll();
         return oficinas.stream().map(this::mapearOficina).toList();
 
     }
 
     @Override
-    public DetalhesOficina detalhesOficinaPorUsuario(Usuario usuario) throws SQLException {
+    public DetalhesOficinaDto detalhesOficinaPorUsuario(Usuario usuario) throws SQLException {
         return mapearOficina(dao.findByUsuario(usuario));
     }
 
@@ -61,8 +59,8 @@ class OficinaServiceImpl implements OficinaService {
         return dao.findById(id, connection);
     }
 
-    private DetalhesOficina mapearOficina(Oficina oficina) {
-        return new DetalhesOficina(
+    private DetalhesOficinaDto mapearOficina(Oficina oficina) {
+        return new DetalhesOficinaDto(
                 oficina.getIdOficina(), oficina.getNome(),
                 enderecoService.mapearEnderecos(oficina.getEnderecos()),
                 oficina.getAvaliacao(), oficina.getUrlMaps(),

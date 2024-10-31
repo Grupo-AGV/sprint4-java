@@ -1,6 +1,6 @@
 package com.penaestrada.dto;
 
-public record DetalhesVeiculo(
+public record DetalhesVeiculoDto(
         Long id,
         String brand,
         String model,

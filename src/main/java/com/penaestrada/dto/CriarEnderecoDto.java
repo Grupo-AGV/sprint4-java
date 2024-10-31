@@ -1,7 +1,6 @@
 package com.penaestrada.dto;
 
-public record DetalhesEndereco(
-        Long id,
+public record CriarEnderecoDto(
         String streetName,
         String number,
         String referencePoint,

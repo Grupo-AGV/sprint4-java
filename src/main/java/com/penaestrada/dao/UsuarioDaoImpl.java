@@ -43,11 +43,11 @@ class UsuarioDaoImpl implements UsuarioDao {
             if (rs.next()) {
                 String cargo = rs.getString("ds_cargo");
                 if (Cargo.CLIENTE.getDescricao().equals(cargo)) {
-                    Cliente cliente = new Cliente(null, rs.getString("ds_senha"), Cargo.valueOf(cargo));
+                    Cliente cliente = new Cliente(email, rs.getString("ds_senha"), Cargo.valueOf(cargo));
                     cliente.setId(rs.getLong("id_usuario"));
                     return cliente;
                 } else if (Cargo.OFICINA.getDescricao().equals(cargo)) {
-                    Oficina oficina = new Oficina(null, rs.getString("ds_senha"), Cargo.valueOf(cargo));
+                    Oficina oficina = new Oficina(email, rs.getString("ds_senha"), Cargo.valueOf(cargo));
                     oficina.setId(rs.getLong("id_usuario"));
                     return oficina;
                 }

@@ -13,6 +13,7 @@ public class Cliente extends Usuario {
     private LocalDate dataNascimento;
 
     private List<Veiculo> veiculos = new ArrayList<>();
+    private List<Telefone> contatos = new ArrayList<>();
 
     public Cliente(String email, String senha, Cargo cargo) {
         super(email, senha, cargo);
@@ -124,6 +125,14 @@ public class Cliente extends Usuario {
 
     public void setVeiculos(List<Veiculo> veiculos) {
         this.veiculos = veiculos;
+    }
+
+    public List<Telefone> getContatos() {
+        return contatos;
+    }
+
+    public void setContatos(List<Telefone> contatos) {
+        this.contatos = contatos;
     }
 
     @Override

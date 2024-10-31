@@ -1,7 +1,7 @@
 package com.penaestrada.service;
 
-import com.penaestrada.dto.CriarEndereco;
-import com.penaestrada.dto.DetalhesEndereco;
+import com.penaestrada.dto.CriarEnderecoDto;
+import com.penaestrada.dto.DetalhesEnderecoDto;
 import com.penaestrada.model.Endereco;
 import com.penaestrada.model.Usuario;
 
@@ -11,11 +11,11 @@ import java.util.List;
 
 public interface EnderecoService {
 
-    void criarEndereco(Usuario usuario, CriarEndereco dto, Connection connection) throws SQLException;
+    void criarEndereco(Usuario usuario, CriarEnderecoDto dto, Connection connection) throws SQLException;
 
-    void adicionarEndereco(Usuario usuario, CriarEndereco dto) throws SQLException;
+    void adicionarEndereco(Usuario usuario, CriarEnderecoDto dto) throws SQLException;
 
-    List<DetalhesEndereco> mapearEnderecos(List<Endereco> enderecos);
+    List<DetalhesEnderecoDto> mapearEnderecos(List<Endereco> enderecos);
 
-    List<DetalhesEndereco> listarEnderecosPorUsuario(Usuario usuario) throws SQLException;
+    List<DetalhesEnderecoDto> listarEnderecosPorUsuario(Usuario usuario) throws SQLException;
 }

@@ -3,8 +3,8 @@ package com.penaestrada.service;
 import com.penaestrada.config.DatabaseConnectionFactory;
 import com.penaestrada.dao.TelefoneDao;
 import com.penaestrada.dao.TelefoneDaoFactory;
-import com.penaestrada.dto.CriarTelefone;
-import com.penaestrada.dto.DetalhesTelefone;
+import com.penaestrada.dto.CriarTelefoneDto;
+import com.penaestrada.dto.DetalhesTelefoneDto;
 import com.penaestrada.infra.exceptions.ExclusaoTelefoneUnico;
 import com.penaestrada.infra.exceptions.TelefoneNotFound;
 import com.penaestrada.model.Telefone;
@@ -20,12 +20,12 @@ class TelefoneServiceImpl implements TelefoneService {
 
 
     @Override
-    public void criarTelefone(Usuario usuario, CriarTelefone dto, Connection connection) throws SQLException {
+    public void criarTelefone(Usuario usuario, CriarTelefoneDto dto, Connection connection) throws SQLException {
         salvarTelefone(usuario, dto, connection);
     }
 
     @Override
-    public void adicionarTelefone(Usuario usuario, CriarTelefone dto) throws SQLException {
+    public void adicionarTelefone(Usuario usuario, CriarTelefoneDto dto) throws SQLException {
         try (Connection connection = DatabaseConnectionFactory.create()){
             salvarTelefone(usuario, dto, connection);
         }
@@ -37,7 +37,7 @@ class TelefoneServiceImpl implements TelefoneService {
     }
 
     @Override
-    public void atualizarTelefone(Usuario usuario, Long id, CriarTelefone dto) throws SQLException {
+    public void atualizarTelefone(Usuario usuario, Long id, CriarTelefoneDto dto) throws SQLException {
         Telefone telefone = formatarTelefone(usuario, dto);
         telefone.setId(id);
         dao.update(telefone);
@@ -49,22 +49,22 @@ class TelefoneServiceImpl implements TelefoneService {
     }
 
     @Override
-    public List<DetalhesTelefone> mapearTelefones(List<Telefone> telefones) {
-        return telefones.stream().map(t -> new DetalhesTelefone(t.getId(), t.getNumeroCompleto())).toList();
+    public List<DetalhesTelefoneDto> mapearTelefones(List<Telefone> telefones) {
+        return telefones.stream().map(t -> new DetalhesTelefoneDto(t.getId(), t.getNumeroCompleto())).toList();
     }
 
-    private void salvarTelefone(Usuario usuario, CriarTelefone dto, Connection connection) throws SQLException {
+    private void salvarTelefone(Usuario usuario, CriarTelefoneDto dto, Connection connection) throws SQLException {
         Telefone telefone = formatarTelefone(usuario, dto);
         dao.create(telefone, connection);
     }
 
-    private Telefone formatarTelefone(Usuario usuario, CriarTelefone dto) {
+    private Telefone formatarTelefone(Usuario usuario, CriarTelefoneDto dto) {
         Telefone telefone = formatarCampos(dto);
         telefone.setUsuario(usuario);
         return telefone;
     }
 
-    private Telefone formatarCampos(CriarTelefone dto) {
+    private Telefone formatarCampos(CriarTelefoneDto dto) {
         Integer ddi = Integer.parseInt(dto.ddi().replace("(", "").replace(")", ""));
         Integer ddd = Integer.parseInt(dto.ddd().replace("+", ""));
         Integer number = Integer.parseInt(dto.number().replace("-", ""));

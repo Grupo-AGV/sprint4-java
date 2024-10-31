@@ -4,11 +4,12 @@ import com.penaestrada.config.DatabaseConnectionFactory;
 import com.penaestrada.dao.ClienteDao;
 import com.penaestrada.dao.ClienteDaoFactory;
 import com.penaestrada.dto.ClienteDashboardDto;
-import com.penaestrada.dto.DetalhesTelefone;
-import com.penaestrada.dto.DetalhesVeiculo;
+import com.penaestrada.dto.DetalhesTelefoneDto;
+import com.penaestrada.dto.DetalhesVeiculoDto;
 import com.penaestrada.infra.exceptions.*;
 import com.penaestrada.model.Cliente;
 import com.penaestrada.model.Telefone;
+import com.penaestrada.model.Usuario;
 import com.penaestrada.model.Veiculo;
 
 import java.sql.Connection;
@@ -55,10 +56,18 @@ class ClienteServiceImpl implements ClienteService {
         return new ClienteDashboardDto(
                 cliente.getId(), cliente.getNome(), cliente.getEmail(),
                 cliente.getCpf(), cliente.getDataNascimento().toString(),
-                veiculos.stream().map(v -> new DetalhesVeiculo(
+                veiculos.stream().map(v -> new DetalhesVeiculoDto(
                         v.getId(), v.getMarca(), v.getModelo(),
                         v.getAnoLancamento().toString(), v.getPlaca())).toList(),
-                contatos.stream().map(t -> new DetalhesTelefone(t.getId(), t.getNumeroCompleto())).toList()
+                contatos.stream().map(t -> new DetalhesTelefoneDto(t.getId(), t.getNumeroCompleto())).toList()
         );
+    }
+
+    @Override
+    public Cliente detalhesOrcamentoCliente(Usuario usuario, Connection connection) throws SQLException, CpfInvalido {
+        Cliente cliente = dao.findByLogin(usuario.getEmail(), connection);
+        List<Telefone> contatos = telefoneService.buscarTelefonesPorUsuario(usuario);
+        cliente.setContatos(contatos);
+        return cliente;
     }
 }

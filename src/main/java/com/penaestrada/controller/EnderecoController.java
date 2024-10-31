@@ -1,7 +1,7 @@
 package com.penaestrada.controller;
 
-import com.penaestrada.dto.CriarEndereco;
-import com.penaestrada.dto.DetalhesEndereco;
+import com.penaestrada.dto.CriarEnderecoDto;
+import com.penaestrada.dto.DetalhesEnderecoDto;
 import com.penaestrada.infra.CookieName;
 import com.penaestrada.infra.exceptions.LoginNotFound;
 import com.penaestrada.model.Usuario;
@@ -27,7 +27,7 @@ public class EnderecoController {
 
     @POST
     @Path("")
-    public Response criarEndereco(@CookieParam(CookieName.TOKEN) String token, CriarEndereco dto) {
+    public Response criarEndereco(@CookieParam(CookieName.TOKEN) String token, CriarEnderecoDto dto) {
         try {
             String login = tokenService.getSubject(token);
             Usuario usuario = usuarioService.findByLogin(login);
@@ -48,7 +48,7 @@ public class EnderecoController {
         try {
             String login = tokenService.getSubject(token);
             Usuario usuario = usuarioService.findByLogin(login);
-            List<DetalhesEndereco> enderecos = enderecoService.listarEnderecosPorUsuario(usuario);
+            List<DetalhesEnderecoDto> enderecos = enderecoService.listarEnderecosPorUsuario(usuario);
             return Response.status(Response.Status.OK).entity(enderecos).build();
         } catch (LoginNotFound e) {
             return Response.status(Response.Status.NOT_FOUND).entity(Map.of("error", e.getMessage())).build();

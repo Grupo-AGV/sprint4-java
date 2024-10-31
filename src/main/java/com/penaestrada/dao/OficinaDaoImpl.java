@@ -113,7 +113,7 @@ class OficinaDaoImpl implements OficinaDao {
 
     @Override
     public Oficina findById(Long id, Connection connection) throws SQLException, OficinaNotFound {
-        String sql = "SELECT * FROM t_pe_oficina WHERE o.id_oficina = ?";
+        String sql = "SELECT * FROM t_pe_oficina WHERE id_oficina = ?";
         PreparedStatement pstmt = connection.prepareStatement(sql);
         pstmt.setLong(1, id);
         ResultSet rs = pstmt.executeQuery();
