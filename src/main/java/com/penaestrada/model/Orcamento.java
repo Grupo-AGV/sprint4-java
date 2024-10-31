@@ -1,27 +1,30 @@
 package com.penaestrada.model;
 
-import java.time.LocalDate;
+import com.penaestrada.infra.exceptions.OficinaDesativada;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Orcamento {
     private Oficina oficina;
     private Veiculo veiculo;
-    private LocalDate dataInicio, dataEntrega;
+    private String diagnosticoInicial;
+    private LocalDateTime dataAgendamento, dataCriacao, dataFinalizacao;
+    private Double valorFinal;
+    private Double valorTotal;
 
-    private LocalDate dataFinalizacao;
-    private Double valorTotal, valorDesconto;
     private List<Diagnostico> diagnosticos = new ArrayList<>();
 
-    public Orcamento(Oficina oficina, Veiculo veiculo, String dataEntrega, Diagnostico diagnostico) {
+    public Orcamento(Oficina oficina, Veiculo veiculo, String diagnosticoInicial, LocalDateTime dataAgendamento) {
         if (isOficinaAtiva(oficina)) {
             this.oficina = oficina;
             this.veiculo = veiculo;
-            this.dataInicio = LocalDate.now();
-            this.dataEntrega = LocalDate.parse(dataEntrega);
-            addDiagnostico(diagnostico);
+            this.diagnosticoInicial = diagnosticoInicial;
+            this.dataCriacao = LocalDateTime.now();
+            this.dataAgendamento = dataAgendamento;
         } else {
-            throw new RuntimeException("Esta oficina esta desativada ou indisponível para reparos!");
+            throw new OficinaDesativada("Esta oficina esta desativada ou indisponível para reparos!");
         }
     }
 
@@ -29,35 +32,64 @@ public class Orcamento {
         return oficina.getStatus().equals('A'); // A de Ativo
     }
 
-    public Orcamento() {
+    public Cliente getUsuario() {
+        return veiculo.getCliente();
+    }
+
+    public void setOficina(Oficina oficina) {
+        this.oficina = oficina;
     }
 
     public Oficina getOficina() {
         return oficina;
     }
 
-    public Cliente getUsuario() {
-        return veiculo.getCliente();
+    public void setVeiculo(Veiculo veiculo) {
+        this.veiculo = veiculo;
     }
 
     public Veiculo getVeiculo() {
         return veiculo;
     }
 
-    public LocalDate getDataInicio() {
-        return dataInicio;
+    public String getDiagnosticoInicial() {
+        return diagnosticoInicial;
     }
 
-    public LocalDate getDataFinalizacao() {
+    public void setDiagnosticoInicial(String diagnosticoInicial) {
+        this.diagnosticoInicial = diagnosticoInicial;
+    }
+
+    public LocalDateTime getDataAgendamento() {
+        return dataAgendamento;
+    }
+
+    public void setDataAgendamento(LocalDateTime dataAgendamento) {
+        this.dataAgendamento = dataAgendamento;
+    }
+
+    public LocalDateTime getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    public LocalDateTime getDataFinalizacao() {
         return dataFinalizacao;
     }
 
-    public LocalDate getDataEntrega() {
-        return dataEntrega;
+    public void setDataFinalizacao(LocalDateTime dataFinalizacao) {
+        this.dataFinalizacao = dataFinalizacao;
     }
 
-    public void finalizarOrcamento() {
-        this.dataFinalizacao = LocalDate.now();
+    public Double getValorFinal() {
+        return valorFinal;
+    }
+
+    public void setValorFinal(Double valorFinal) {
+        this.valorFinal = valorFinal;
     }
 
     public Double getValorTotal() {
@@ -68,20 +100,11 @@ public class Orcamento {
         this.valorTotal = valorTotal;
     }
 
-    public Double getValorDesconto() {
-        return valorDesconto;
-    }
-
-    public void setValorDesconto(Double valorDesconto) {
-        this.valorDesconto = valorDesconto;
-    }
-
     public List<Diagnostico> getDiagnosticos() {
         return diagnosticos;
     }
 
-    public void addDiagnostico(Diagnostico diagnostico) {
-        this.diagnosticos.add(diagnostico);
-        diagnostico.setOrcamento(this);
+    public void setDiagnosticos(List<Diagnostico> diagnosticos) {
+        this.diagnosticos = diagnosticos;
     }
 }

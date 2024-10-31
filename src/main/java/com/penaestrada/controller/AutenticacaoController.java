@@ -1,6 +1,7 @@
 package com.penaestrada.controller;
 
 import com.penaestrada.dto.LoginDto;
+import com.penaestrada.infra.CookieName;
 import com.penaestrada.infra.exceptions.LoginInvalido;
 import com.penaestrada.infra.exceptions.LoginNotFound;
 import com.penaestrada.model.Usuario;
@@ -31,7 +32,7 @@ public class AutenticacaoController {
             Usuario usuario = usuarioService.logarUsuario(dto.email(), dto.password());
             usuario.setEmail(dto.email());
             String token = tokenService.genToken(usuario);
-            NewCookie cookie = new NewCookie("pe_access_token", token, "/", null, null, tokenService.expirationDate().getNano(), true, true);
+            NewCookie cookie = new NewCookie(CookieName.TOKEN, token, "/", null, null, tokenService.expirationDate().getNano(), true, true);
             return Response.status(Response.Status.OK).entity(Map.of("token", token)).cookie(cookie).build();
         } catch (LoginInvalido e) {
             return Response.status(Response.Status.UNAUTHORIZED).entity(Map.of("error", e.getMessage())).build();

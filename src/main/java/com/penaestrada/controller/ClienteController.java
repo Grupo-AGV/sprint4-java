@@ -4,6 +4,7 @@ import com.penaestrada.config.DatabaseConnectionFactory;
 import com.penaestrada.dto.ClienteDashboardDto;
 import com.penaestrada.dto.CriarClienteDto;
 import com.penaestrada.dto.CriarVeiculoDto;
+import com.penaestrada.infra.CookieName;
 import com.penaestrada.infra.exceptions.*;
 import com.penaestrada.model.Cargo;
 import com.penaestrada.model.Cliente;
@@ -26,7 +27,6 @@ public class ClienteController {
     private final UsuarioService usuarioService = UsuarioServiceFactory.create();
     private final VeiculoService veiculoService = VeiculoServiceFactory.create();
     private final TokenService tokenService = TokenServiceFactory.create();
-    private final TelefoneService telefoneService = TelefoneServiceFactory.create();
 
     @POST
     @Path("/signup")
@@ -59,7 +59,7 @@ public class ClienteController {
     @GET
     @Path("/dashboard")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response dashboard(@CookieParam("pe_access_token") String token) {
+    public Response dashboard(@CookieParam(CookieName.TOKEN) String token) {
         try {
             String login = tokenService.getSubject(token);
             ClienteDashboardDto dashboard = clienteService.dashboard(login);
@@ -76,7 +76,7 @@ public class ClienteController {
     @Path("/vehicle")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createVehicle(@CookieParam("pe_access_token") String token, CriarVeiculoDto dto) {
+    public Response createVehicle(@CookieParam(CookieName.TOKEN) String token, CriarVeiculoDto dto) {
         try {
             String login = tokenService.getSubject(token);
             Cliente cliente = (Cliente) usuarioService.findByLogin(login);
@@ -94,7 +94,7 @@ public class ClienteController {
     @DELETE
     @Path("/vehicle")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteVehicle(@CookieParam("pe_access_token") String token, @QueryParam("id") Long id) {
+    public Response deleteVehicle(@CookieParam(CookieName.TOKEN) String token, @QueryParam("id") Long id) {
         if (id == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("error", "Id do veículo não informado")).build();
         }

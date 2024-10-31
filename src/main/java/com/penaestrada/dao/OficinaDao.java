@@ -1,5 +1,6 @@
 package com.penaestrada.dao;
 
+import com.penaestrada.infra.security.OficinaNotFound;
 import com.penaestrada.model.Oficina;
 import com.penaestrada.model.Usuario;
 
@@ -13,4 +14,6 @@ public interface OficinaDao {
     List<Oficina> findAll() throws SQLException;
 
     Oficina findByUsuario(Usuario usuario) throws SQLException;
+
+    Oficina findById(Long id, Connection connection) throws SQLException, OficinaNotFound;
 }

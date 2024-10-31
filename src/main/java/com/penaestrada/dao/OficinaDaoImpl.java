@@ -1,6 +1,7 @@
 package com.penaestrada.dao;
 
 import com.penaestrada.config.DatabaseConnectionFactory;
+import com.penaestrada.infra.security.OficinaNotFound;
 import com.penaestrada.model.*;
 
 import java.sql.Connection;
@@ -108,6 +109,29 @@ class OficinaDaoImpl implements OficinaDao {
             }
         }
         return oficina;
+    }
+
+    @Override
+    public Oficina findById(Long id, Connection connection) throws SQLException, OficinaNotFound {
+        String sql = "SELECT * FROM t_pe_oficina WHERE o.id_oficina = ?";
+        PreparedStatement pstmt = connection.prepareStatement(sql);
+        pstmt.setLong(1, id);
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            Oficina oficina = new Oficina(
+                    rs.getString("nm_unid_oficina"),
+                    null,
+                    rs.getDouble("vl_avaliacao"),
+                    rs.getString("url_maps"),
+                    rs.getString("st_oficina").charAt(0),
+                    null,
+                    null,
+                    Cargo.OFICINA
+            );
+            oficina.setIdOficina(rs.getLong("id_oficina"));
+            return oficina;
+        }
+        throw new OficinaNotFound("Oficina não encontrada");
     }
 
 

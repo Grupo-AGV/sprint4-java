@@ -1,6 +1,7 @@
 package com.penaestrada.controller;
 
 import com.penaestrada.dto.CriarTelefone;
+import com.penaestrada.infra.CookieName;
 import com.penaestrada.infra.exceptions.ExclusaoTelefoneUnico;
 import com.penaestrada.infra.exceptions.LoginNotFound;
 import com.penaestrada.infra.exceptions.TelefoneNotFound;
@@ -28,7 +29,7 @@ public class TelefoneController {
     @Path("")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response criarTelefone(@CookieParam("pe_access_token") String token, CriarTelefone dto) {
+    public Response criarTelefone(@CookieParam(CookieName.TOKEN) String token, CriarTelefone dto) {
         try {
             String login = tokenService.getSubject(token);
             Usuario usuario = usuarioService.findByLogin(login);
@@ -45,7 +46,7 @@ public class TelefoneController {
     @PUT
     @Path("")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response atualizarTelefone(@CookieParam("pe_access_token") String token, @QueryParam("id") Long id, CriarTelefone dto) {
+    public Response atualizarTelefone(@CookieParam(CookieName.TOKEN) String token, @QueryParam("id") Long id, CriarTelefone dto) {
         if (id == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("error", "Id do telefone não informado.")).build();
         }
@@ -65,7 +66,7 @@ public class TelefoneController {
     @DELETE
     @Path("")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deletarTelefone(@CookieParam("pe_access_token") String token, @QueryParam("id") Long id) {
+    public Response deletarTelefone(@CookieParam(CookieName.TOKEN) String token, @QueryParam("id") Long id) {
         if (id == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("error", "Id do veículo não informado")).build();
         }

@@ -18,4 +18,6 @@ public interface VeiculoService {
     List<Veiculo> findVeiculosByClienteId(Long idCliente) throws SQLException;
 
     void removerVeiculoDoCliente(Cliente cliente, Long id) throws SQLException, VeiculoNotFound, ExclusaoVeiculoUnico;
+
+    Veiculo findByIdEClienteId(Long idCliente, Long id, Connection connection) throws SQLException, VeiculoNotFound;
 }

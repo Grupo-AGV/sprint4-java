@@ -39,6 +39,11 @@ class VeiculoServiceImpl implements VeiculoService {
         dao.deleteByIdEClienteId(cliente.getId(), id);
     }
 
+    @Override
+    public Veiculo findByIdEClienteId(Long idCliente, Long id, Connection connection) throws SQLException, VeiculoNotFound {
+        return dao.findByIdEClienteId(idCliente, id, connection);
+    }
+
     private void adicionarVeiculo(Veiculo veiculo, Connection connection) throws SQLException, VeiculoExistente {
         veiculo.setPlaca(veiculo.getPlaca().replace("-", ""));
         if (dao.existsByPlaca(veiculo.getPlaca(), connection)) {

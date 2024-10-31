@@ -1,5 +1,6 @@
 package com.penaestrada.infra.security;
 
+import com.penaestrada.infra.CookieName;
 import com.penaestrada.service.security.TokenService;
 import com.penaestrada.service.security.TokenServiceFactory;
 
@@ -20,7 +21,7 @@ public class SecurityFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         String path = requestContext.getUriInfo().getPath();
-        Cookie cookie = requestContext.getCookies().get("pe_access_token");
+        Cookie cookie = requestContext.getCookies().get(CookieName.TOKEN);
 
         if (isPublicPath(path)) {
             return; // Permite acesso sem autenticação

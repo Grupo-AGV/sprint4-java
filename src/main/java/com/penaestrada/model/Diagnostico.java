@@ -4,25 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Diagnostico {
-    private List<Servico> servicosListados = new ArrayList<>();
-    private String descricao;
+    private Long id;
     private Orcamento orcamento;
+    private String descricao;
+    private List<Servico> servicosListados = new ArrayList<>();
 
-    public Diagnostico(String descricao) {
+    public Diagnostico(Orcamento orcamento, String descricao) {
+        this.orcamento = orcamento;
         this.descricao = descricao;
-    }
-
-    public Diagnostico(String descricao, Servico servico) {
-        this.descricao = descricao;
-        adicionarServico(servico);
     }
 
     public void adicionarServico(Servico servico) {
         this.servicosListados.add(servico);
-        servico.setDiagnostico(this);
     }
 
-    public Diagnostico() {
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getDescricao() {

@@ -7,6 +7,7 @@ import com.penaestrada.dto.CriarEndereco;
 import com.penaestrada.dto.CriarOficina;
 import com.penaestrada.dto.DetalhesOficina;
 import com.penaestrada.infra.exceptions.EmailExistente;
+import com.penaestrada.infra.security.OficinaNotFound;
 import com.penaestrada.model.Cargo;
 import com.penaestrada.model.Endereco;
 import com.penaestrada.model.Oficina;
@@ -53,6 +54,11 @@ class OficinaServiceImpl implements OficinaService {
     @Override
     public DetalhesOficina detalhesOficinaPorUsuario(Usuario usuario) throws SQLException {
         return mapearOficina(dao.findByUsuario(usuario));
+    }
+
+    @Override
+    public Oficina findById(Long id, Connection connection) throws SQLException, OficinaNotFound {
+        return dao.findById(id, connection);
     }
 
     private DetalhesOficina mapearOficina(Oficina oficina) {

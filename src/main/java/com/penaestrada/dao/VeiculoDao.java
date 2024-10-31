@@ -18,4 +18,5 @@ public interface VeiculoDao {
 
     void deleteByIdEClienteId(Long idCliente, Long idVeiculo) throws SQLException, VeiculoNotFound, ExclusaoVeiculoUnico;
 
+    Veiculo findByIdEClienteId(Long idCliente, Long idVeiculo, Connection connection) throws SQLException, VeiculoNotFound;
 }

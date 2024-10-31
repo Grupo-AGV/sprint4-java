@@ -4,6 +4,7 @@
     <file url="file://$PROJECT_DIR$/src/main/java/com/penaestrada/dao/ClienteDaoImpl.java" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/penaestrada/dao/EnderecoDaoImpl.java" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/penaestrada/dao/OficinaDaoImpl.java" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/penaestrada/dao/OrcamentoDaoImpl.java" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/penaestrada/dao/TelefoneDaoImpl.java" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/penaestrada/dao/UsuarioDaoImpl.java" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/penaestrada/dao/VeiculoDaoImpl.java" dialect="GenericSQL" />

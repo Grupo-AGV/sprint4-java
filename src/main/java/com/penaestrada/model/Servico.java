@@ -1,6 +1,7 @@
 package com.penaestrada.model;
 
 public class Servico {
+    private Long id;
     private String descricao;
     private Double valorMaoDeObra, valorPeca;
     private Peca peca;
@@ -11,14 +12,15 @@ public class Servico {
         this.valorMaoDeObra = valorMaoDeObra;
     }
 
-    public Servico(String descricao, Double valorMaoDeObra, Double valorPeca, Peca peca) { // COM PEÇA
-        this.descricao = descricao;
-        this.valorMaoDeObra = valorMaoDeObra;
-        this.valorPeca = valorPeca;
-        this.peca = peca;
+    public Servico() {
     }
 
-    public Servico() {
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getDescricao() {
@@ -35,22 +37,6 @@ public class Servico {
 
     public void setValorMaoDeObra(Double valorMaoDeObra) {
         this.valorMaoDeObra = valorMaoDeObra;
-    }
-
-    public Double getValorPeca() {
-        return valorPeca;
-    }
-
-    public void setValorPeca(Double valorPeca) {
-        this.valorPeca = valorPeca;
-    }
-
-    public Peca getPeca() {
-        return peca;
-    }
-
-    public void setPeca(Peca peca) {
-        this.peca = peca;
     }
 
     public Diagnostico getDiagnostico() {

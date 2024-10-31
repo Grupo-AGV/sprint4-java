@@ -3,6 +3,7 @@ package com.penaestrada.controller;
 import com.penaestrada.config.DatabaseConnectionFactory;
 import com.penaestrada.dto.CriarOficina;
 import com.penaestrada.dto.DetalhesOficina;
+import com.penaestrada.infra.CookieName;
 import com.penaestrada.infra.exceptions.EmailExistente;
 import com.penaestrada.infra.exceptions.LoginNotFound;
 import com.penaestrada.model.*;
@@ -66,7 +67,7 @@ public class OficinaController {
     @GET
     @Path("/details")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response detalhesOficina(@CookieParam("pe_access_token") String token) {
+    public Response detalhesOficina(@CookieParam(CookieName.TOKEN) String token) {
         try {
             Cargo cargo = Cargo.valueOf(tokenService.getCargo(token));
             if (cargo != Cargo.OFICINA) {

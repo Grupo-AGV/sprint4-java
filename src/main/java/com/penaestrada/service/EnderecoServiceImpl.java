@@ -12,7 +12,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-public class EnderecoServiceImpl implements EnderecoService {
+class EnderecoServiceImpl implements EnderecoService {
 
     private final EnderecoDao dao = EnderecoDaoFactory.create();
 

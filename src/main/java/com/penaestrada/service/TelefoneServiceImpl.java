@@ -14,7 +14,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-public class TelefoneServiceImpl implements TelefoneService {
+class TelefoneServiceImpl implements TelefoneService {
 
     private final TelefoneDao dao = TelefoneDaoFactory.create();
 
