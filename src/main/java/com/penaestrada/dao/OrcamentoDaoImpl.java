@@ -14,7 +14,7 @@ class OrcamentoDaoImpl implements OrcamentoDao {
         String sql = "INSERT INTO t_pe_orcamento (id_oficina, id_veiculo, ds_diagnostico_inicial, dt_agendamento, dt_criacao) VALUES (?, ?, ?, ?, ?)";
 
         PreparedStatement pstmt = connection.prepareStatement(sql);
-        pstmt.setLong(1, orcamento.getOficina().getIdOficina());
+        pstmt.setLong(1, orcamento.getOficina().getId());
         pstmt.setLong(2, orcamento.getVeiculo().getId());
         pstmt.setString(3, orcamento.getDiagnosticoInicial());
         Timestamp agendamentoTimestamp = Timestamp.valueOf(orcamento.getDataAgendamento());

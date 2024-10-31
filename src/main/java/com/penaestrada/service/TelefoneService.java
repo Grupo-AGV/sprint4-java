@@ -19,7 +19,7 @@ public interface TelefoneService {
 
     List<Telefone> buscarTelefonesPorUsuario(Usuario usuario) throws SQLException;
 
-    void atualizarTelefone(Usuario usuario, Long id, CriarTelefoneDto dto) throws SQLException;
+    void atualizarTelefone(Usuario usuario, Long id, CriarTelefoneDto dto) throws SQLException, TelefoneNotFound;
 
     void removeTelefoneDoUsuario(Usuario usuario, Long id) throws SQLException, TelefoneNotFound, ExclusaoTelefoneUnico;
 

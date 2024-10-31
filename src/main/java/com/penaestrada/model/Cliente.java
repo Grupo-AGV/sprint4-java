@@ -8,7 +8,6 @@ import java.util.List;
 
 public class Cliente extends Usuario {
 
-    private String nome;
     private String cpf;
     private LocalDate dataNascimento;
 
@@ -21,14 +20,14 @@ public class Cliente extends Usuario {
 
     public Cliente(String nome, String cpf, String dataNascimento, String email, String senha, Cargo cargo) throws CpfInvalido {
         super(email, senha, cargo);
-        this.nome = nome;
+        setNome(nome); // classe USUARIO
         validaCpf(cpf);
         setDataNascimento(LocalDate.parse(dataNascimento));
     }
 
     private void setDataNascimento(LocalDate dataNascimento) {
         if (isMaiorDeIdade(dataNascimento)) {
-            throw new RuntimeException("Usuário menor de idade!");
+            throw new RuntimeException("Cliente menor de idade!");
         } else {
             this.dataNascimento = dataNascimento;
         }
@@ -103,14 +102,6 @@ public class Cliente extends Usuario {
         return doc;
     }
 
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
     public String getCpf() {
         return cpf;
     }
@@ -135,13 +126,4 @@ public class Cliente extends Usuario {
         this.contatos = contatos;
     }
 
-    @Override
-    public String toString() {
-        return "Usuario{" +
-                "id=" + getId() +
-                ", name='" + nome + '\'' +
-                ", cpf='" + cpf + '\'' +
-                ", birthDate=" + dataNascimento +
-                '}';
-    }
 }

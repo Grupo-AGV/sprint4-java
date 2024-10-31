@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Oficina extends Usuario {
-    private Long idOficina;
-    private String nome;
+
     private String razaoSocial;
     private Double avaliacao;
     private String urlMaps;
@@ -20,23 +19,11 @@ public class Oficina extends Usuario {
 
     public Oficina(String nome, String razaoSocial, Double avaliacao, String urlMaps, Character status, String email, String senha, Cargo cargo) {
         super(email, senha, cargo);
-        this.nome = nome;
+        setNome(nome); // classe Usuario
         this.razaoSocial = razaoSocial;
         this.avaliacao = avaliacao;
         this.urlMaps = urlMaps;
         this.status = status;
-    }
-
-    public Long getIdOficina() {
-        return idOficina;
-    }
-
-    public void setIdOficina(Long idOficina) {
-        this.idOficina = idOficina;
-    }
-
-    public String getNome() {
-        return nome;
     }
 
     public String getRazaoSocial() {
@@ -46,7 +33,6 @@ public class Oficina extends Usuario {
     public Double getAvaliacao() {
         return avaliacao;
     }
-
 
     public String getUrlMaps() {
         return urlMaps;

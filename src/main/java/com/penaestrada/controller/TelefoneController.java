@@ -55,7 +55,7 @@ public class TelefoneController {
             Usuario usuario = usuarioService.findByLogin(login);
             telefoneService.atualizarTelefone(usuario, id, dto);
             return Response.status(Response.Status.OK).build();
-        } catch (LoginNotFound e) {
+        } catch (LoginNotFound | TelefoneNotFound e) {
             return Response.status(Response.Status.NOT_FOUND).entity(Map.of("error", e.getMessage())).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)

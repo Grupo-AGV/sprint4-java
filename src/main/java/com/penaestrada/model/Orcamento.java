@@ -13,7 +13,7 @@ public class Orcamento {
     private LocalDateTime dataAgendamento, dataCriacao, dataFinalizacao;
     private Double valorFinal;
 
-    private List<Diagnostico> diagnosticos = new ArrayList<>();
+    private List<Servico> servicos = new ArrayList<>();
 
     public Orcamento(Oficina oficina, Veiculo veiculo, String diagnosticoInicial, LocalDateTime dataAgendamento) {
         if (isOficinaAtiva(oficina)) {
@@ -100,11 +100,11 @@ public class Orcamento {
         this.valorFinal = valorFinal;
     }
 
-    public List<Diagnostico> getDiagnosticos() {
-        return diagnosticos;
+    public List<Servico> getServicos() {
+        return servicos;
     }
 
-    public void setDiagnosticos(List<Diagnostico> diagnosticos) {
-        this.diagnosticos = diagnosticos;
+    public void setServicos(List<Servico> servicos) {
+        this.servicos = servicos;
     }
 }

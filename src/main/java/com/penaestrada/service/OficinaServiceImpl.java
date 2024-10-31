@@ -61,7 +61,7 @@ class OficinaServiceImpl implements OficinaService {
 
     private DetalhesOficinaDto mapearOficina(Oficina oficina) {
         return new DetalhesOficinaDto(
-                oficina.getIdOficina(), oficina.getNome(),
+                oficina.getId(), oficina.getNome(),
                 enderecoService.mapearEnderecos(oficina.getEnderecos()),
                 oficina.getAvaliacao(), oficina.getUrlMaps(),
                 telefoneService.mapearTelefones(oficina.getTelefones()));

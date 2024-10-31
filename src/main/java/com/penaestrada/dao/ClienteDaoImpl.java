@@ -16,14 +16,14 @@ class ClienteDaoImpl implements ClienteDao {
 
     @Override
     public void create(Cliente cliente, Connection connection) throws SQLException {
-        final String sql = "INSERT INTO T_PE_CLIENTE(id_usuario, nm_usuario, nr_cpf, dt_nascimento) VALUES (?, ?, ?, TO_DATE(?, 'YYYY-MM-DD'))";
+        final String sql = "INSERT INTO T_PE_CLIENTE(id_usuario, nr_cpf, dt_nascimento) VALUES (?, ?, TO_DATE(?, 'YYYY-MM-DD'))";
 
-        PreparedStatement pstmt = connection.prepareCall(sql);
-        pstmt.setLong(1, cliente.getId());
-        pstmt.setString(2, cliente.getNome());
-        pstmt.setString(3, cliente.getCpf());
-        pstmt.setString(4, cliente.getDataNascimento().toString());
-        pstmt.executeUpdate();
+        try (PreparedStatement pstmt = connection.prepareCall(sql)) {
+            pstmt.setLong(1, cliente.getId());
+            pstmt.setString(2, cliente.getCpf());
+            pstmt.setString(3, cliente.getDataNascimento().toString());
+            pstmt.executeUpdate();
+        }
     }
 
     @Override
@@ -41,9 +41,8 @@ class ClienteDaoImpl implements ClienteDao {
 
     @Override
     public Cliente findByLogin(String login, Connection connection) throws CpfInvalido, SQLException {
-        String sql = "SELECT c.id_usuario, c.nm_usuario, u.ds_email, c.nr_cpf, c.dt_nascimento FROM t_pe_cliente c INNER JOIN t_pe_usuario u ON c.id_usuario = u.id_usuario AND u.ds_email = ?";
-        try {
-            PreparedStatement pstmt = connection.prepareStatement(sql);
+        String sql = "SELECT c.id_usuario, u.nm_usuario, u.ds_email, c.nr_cpf, c.dt_nascimento FROM t_pe_cliente c INNER JOIN t_pe_usuario u ON c.id_usuario = u.id_usuario AND u.ds_email = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, login);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
@@ -59,7 +58,6 @@ class ClienteDaoImpl implements ClienteDao {
             }
             return null;
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
             throw new SQLException("Erro ao buscar cliente por login");
         } catch (CpfInvalido e) {
             throw new CpfInvalido("CPF inválido");

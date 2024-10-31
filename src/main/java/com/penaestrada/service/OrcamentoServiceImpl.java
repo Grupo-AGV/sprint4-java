@@ -7,6 +7,7 @@ import com.penaestrada.dto.CriarOrcamentoDto;
 import com.penaestrada.dto.DetalhesOrcamentoDto;
 import com.penaestrada.infra.DefaultDateFormatter;
 import com.penaestrada.infra.exceptions.CpfInvalido;
+import com.penaestrada.infra.exceptions.OrcamentoNotFound;
 import com.penaestrada.infra.exceptions.VeiculoNotFound;
 import com.penaestrada.infra.security.OficinaNotFound;
 import com.penaestrada.model.*;
@@ -39,9 +40,10 @@ class OrcamentoServiceImpl implements OrcamentoService {
     }
 
     @Override
-    public DetalhesOrcamentoDto findByIdEUsuario(Usuario usuario, Long id) throws SQLException, CpfInvalido {
+    public DetalhesOrcamentoDto findByIdEUsuario(Usuario usuario, Long id) throws SQLException, CpfInvalido, OrcamentoNotFound {
         Connection connection = DatabaseConnectionFactory.create();
         Orcamento orcamento = dao.findByIdEDonoVeiculo(usuario.getId(), id, connection);
         Cliente cliente = clienteService.detalhesOrcamentoCliente(usuario, connection);
+        return null;
     }
 }

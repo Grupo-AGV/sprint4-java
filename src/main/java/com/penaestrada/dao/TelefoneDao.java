@@ -15,7 +15,7 @@ public interface TelefoneDao {
 
         List<Telefone> findAll(Usuario usuario) throws SQLException;
 
-        void update(Telefone telefone) throws SQLException;
+        void update(Telefone telefone) throws SQLException, TelefoneNotFound;
 
         void deleteByIdEUsuarioId(Long idCliente, Long idTelefone) throws SQLException, ExclusaoTelefoneUnico, TelefoneNotFound;
 }

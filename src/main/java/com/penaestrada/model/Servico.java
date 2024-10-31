@@ -2,17 +2,14 @@ package com.penaestrada.model;
 
 public class Servico {
     private Long id;
+    private Orcamento orcamento;
     private String descricao;
     private Double valorMaoDeObra, valorPeca;
     private Peca peca;
-    private Diagnostico diagnostico;
 
     public Servico(String descricao, Double valorMaoDeObra) { // SEM PEÇA
         this.descricao = descricao;
         this.valorMaoDeObra = valorMaoDeObra;
-    }
-
-    public Servico() {
     }
 
     public Long getId() {
@@ -39,11 +36,11 @@ public class Servico {
         this.valorMaoDeObra = valorMaoDeObra;
     }
 
-    public Diagnostico getDiagnostico() {
-        return diagnostico;
+    public Orcamento getOrcamento() {
+        return orcamento;
     }
 
-    public void setDiagnostico(Diagnostico diagnostico) {
-        this.diagnostico = diagnostico;
+    public void setOrcamento(Orcamento orcamento) {
+        this.orcamento = orcamento;
     }
 }

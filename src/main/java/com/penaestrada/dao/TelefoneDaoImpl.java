@@ -48,7 +48,7 @@ class TelefoneDaoImpl implements TelefoneDao {
     }
 
     @Override
-    public void update(Telefone telefone) throws SQLException {
+    public void update(Telefone telefone) throws SQLException, TelefoneNotFound {
         String sql = "UPDATE t_pe_telefone SET nr_ddi = ?, nr_ddd = ?, nr_telefone = ? WHERE id_telefone = ? AND id_usuario = ?";
         try (Connection connection = DatabaseConnectionFactory.create()) {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -57,9 +57,10 @@ class TelefoneDaoImpl implements TelefoneDao {
             preparedStatement.setInt(3, telefone.getNumero());
             preparedStatement.setLong(4, telefone.getId());
             preparedStatement.setLong(5, telefone.getUsuario().getId());
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw e;
+            int linhasAlteradas = preparedStatement.executeUpdate();
+
+            if (linhasAlteradas == 0)
+                throw new TelefoneNotFound("Telefone não encontrado.");
         }
     }
 

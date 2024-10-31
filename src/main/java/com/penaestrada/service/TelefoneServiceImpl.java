@@ -37,7 +37,7 @@ class TelefoneServiceImpl implements TelefoneService {
     }
 
     @Override
-    public void atualizarTelefone(Usuario usuario, Long id, CriarTelefoneDto dto) throws SQLException {
+    public void atualizarTelefone(Usuario usuario, Long id, CriarTelefoneDto dto) throws SQLException, TelefoneNotFound {
         Telefone telefone = formatarTelefone(usuario, dto);
         telefone.setId(id);
         dao.update(telefone);
