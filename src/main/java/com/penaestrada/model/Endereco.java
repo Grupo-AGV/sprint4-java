@@ -11,9 +11,9 @@ public class Endereco {
     private String estado;
     private String bairro;
     private String zonaBairro;
-    private Integer cep;
+    private String cep;
 
-    public Endereco(Usuario usuario, String nome, Integer numero, String pontoReferencia, String cidade, String estado, String bairro, String zonaBairro, Integer cep) {
+    public Endereco(Usuario usuario, String nome, Integer numero, String pontoReferencia, String cidade, String estado, String bairro, String zonaBairro, String cep) {
         this.usuario = usuario;
         this.nome = nome;
         this.numero = numero;
@@ -100,11 +100,11 @@ public class Endereco {
         this.zonaBairro = zonaBairro;
     }
 
-    public Integer getCep() {
+    public String getCep() {
         return cep;
     }
 
-    public void setCep(Integer cep) {
+    public void setCep(String cep) {
         this.cep = cep;
     }
 }

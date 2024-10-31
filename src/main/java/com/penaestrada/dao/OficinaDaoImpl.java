@@ -33,7 +33,7 @@ class OficinaDaoImpl implements OficinaDao {
         Map<Long, Oficina> oficinaMap = new HashMap<>();
         String sql = "SELECT o.id_oficina, o.nm_unid_oficina, o.vl_avaliacao, o.url_maps, " +
                 "e.id_endereco, e.nm_logradouro, e.nr_logradouro, " +
-                "e.nm_cidade, e.nm_estado, e.nm_bairro, e.nm_zona_bairro, e.nr_cep, " +
+                "e.nm_cidade, e.nm_estado, e.nm_bairro, e.nm_zona_bairro, e.sq_cep, " +
                 "t.id_telefone, t.nr_ddi, t.nr_ddd, t.nr_telefone " +
                 "FROM t_pe_oficina o " +
                 "LEFT JOIN t_pe_endereco e ON o.id_usuario = e.id_usuario " +
@@ -77,7 +77,7 @@ class OficinaDaoImpl implements OficinaDao {
 
         String sql = "SELECT o.id_oficina, o.nm_unid_oficina, o.vl_avaliacao, o.url_maps, " +
                 "e.id_endereco, e.nm_logradouro, e.nr_logradouro, " +
-                "e.nm_cidade, e.nm_estado, e.nm_bairro, e.nm_zona_bairro, e.nr_cep, " +
+                "e.nm_cidade, e.nm_estado, e.nm_bairro, e.nm_zona_bairro, e.sq_cep, " +
                 "t.id_telefone, t.nr_ddi, t.nr_ddd, t.nr_telefone " +
                 "FROM t_pe_oficina o " +
                 "LEFT JOIN t_pe_endereco e ON o.id_usuario = e.id_usuario " +
@@ -127,7 +127,7 @@ class OficinaDaoImpl implements OficinaDao {
                 endereco.setEstado(rs.getString("nm_estado"));
                 endereco.setBairro(rs.getString("nm_bairro"));
                 endereco.setZonaBairro(rs.getString("nm_zona_bairro"));
-                endereco.setCep(rs.getInt("nr_cep"));
+                endereco.setCep(rs.getString("sq_cep"));
                 oficina.getEnderecos().add(endereco);
             }
         }

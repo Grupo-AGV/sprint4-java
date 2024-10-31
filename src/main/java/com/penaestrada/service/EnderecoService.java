@@ -16,4 +16,6 @@ public interface EnderecoService {
     void adicionarEndereco(Usuario usuario, CriarEndereco dto) throws SQLException;
 
     List<DetalhesEndereco> mapearEnderecos(List<Endereco> enderecos);
+
+    List<DetalhesEndereco> listarEnderecosPorUsuario(Usuario usuario) throws SQLException;
 }

@@ -33,12 +33,18 @@ public class EnderecoServiceImpl implements EnderecoService {
         return enderecos.stream().map(this::mapearEndereco).toList();
     }
 
+    @Override
+    public List<DetalhesEndereco> listarEnderecosPorUsuario(Usuario usuario) throws SQLException {
+        List<Endereco> enderecos = dao.findEnderecoByUsuario(usuario);
+        return mapearEnderecos(enderecos);
+    }
+
     private DetalhesEndereco mapearEndereco(Endereco endereco) {
         String cep = String.valueOf(endereco.getCep()).substring(0, 5) + "-" + String.valueOf(endereco.getCep()).substring(5);
         return new DetalhesEndereco(
                 endereco.getIdEndereco(), endereco.getNome(), String.valueOf(endereco.getNumero()),
-                endereco.getPontoReferencia(), endereco.getCidade(), endereco.getEstado(),
-                endereco.getBairro(), endereco.getZonaBairro(), cep);
+                endereco.getPontoReferencia(), cep, endereco.getBairro(),
+                endereco.getZonaBairro(), endereco.getCidade(), endereco.getEstado());
     }
 
     private void salvarEndereco(CriarEndereco dto, Usuario usuario, Connection connection) throws SQLException {
@@ -46,7 +52,7 @@ public class EnderecoServiceImpl implements EnderecoService {
                 usuario, dto.streetName(), Integer.parseInt(dto.number()),
                 dto.referencePoint(), dto.city(), dto.state(),
                 dto.neighborhood(), dto.neighborhoodZone(),
-                Integer.parseInt(dto.zipCode().replace("-", "")));
+                dto.zipCode().replace("-", ""));
         dao.create(endereco, connection);
     }
 }
