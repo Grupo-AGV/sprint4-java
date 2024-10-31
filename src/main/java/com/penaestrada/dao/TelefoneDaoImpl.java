@@ -27,11 +27,10 @@ class TelefoneDaoImpl implements TelefoneDao {
     }
 
     @Override
-    public List<Telefone> findAll(Usuario usuario) throws SQLException {
+    public List<Telefone> findAll(Usuario usuario, Connection connection) throws SQLException {
         List<Telefone> resultado = new ArrayList<>();
         String sql = "SELECT * FROM t_pe_telefone WHERE id_usuario = ?";
-        try (Connection connection = DatabaseConnectionFactory.create()) {
-            PreparedStatement pstmt = connection.prepareStatement(sql);
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setLong(1, usuario.getId());
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
@@ -41,8 +40,6 @@ class TelefoneDaoImpl implements TelefoneDao {
                 veiculo.setId(rs.getLong("id_telefone"));
                 resultado.add(veiculo);
             }
-        } catch (SQLException e) {
-            throw e;
         }
         return resultado;
     }

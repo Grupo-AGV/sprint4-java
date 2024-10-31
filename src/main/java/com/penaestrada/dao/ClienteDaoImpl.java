@@ -1,5 +1,6 @@
 package com.penaestrada.dao;
 
+import com.penaestrada.infra.exceptions.ClienteNotFound;
 import com.penaestrada.infra.exceptions.CpfInvalido;
 import com.penaestrada.model.Cargo;
 import com.penaestrada.model.Cliente;
@@ -40,7 +41,7 @@ class ClienteDaoImpl implements ClienteDao {
     }
 
     @Override
-    public Cliente findByLogin(String login, Connection connection) throws CpfInvalido, SQLException {
+    public Cliente findByLogin(String login, Connection connection) throws CpfInvalido, SQLException, ClienteNotFound {
         String sql = "SELECT c.id_usuario, u.nm_usuario, u.ds_email, c.nr_cpf, c.dt_nascimento FROM t_pe_cliente c INNER JOIN t_pe_usuario u ON c.id_usuario = u.id_usuario AND u.ds_email = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, login);
@@ -56,7 +57,7 @@ class ClienteDaoImpl implements ClienteDao {
                 cliente.setId(rs.getLong("id_usuario"));
                 return cliente;
             }
-            return null;
+            throw new ClienteNotFound();
         } catch (SQLException e) {
             throw new SQLException("Erro ao buscar cliente por login");
         } catch (CpfInvalido e) {

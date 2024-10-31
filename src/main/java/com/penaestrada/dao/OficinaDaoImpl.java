@@ -75,10 +75,8 @@ class OficinaDaoImpl implements OficinaDao {
     }
 
     @Override
-    public Oficina findByUsuario(Usuario usuario) throws SQLException {
-        Oficina oficina = null;
-
-        String sql = "SELECT o.id_oficina, u.nm_usuario, o.vl_avaliacao, o.url_maps, " +
+    public Oficina findById(Long id, Connection connection) throws SQLException, OficinaNotFound {
+        String sql = "SELECT o.id_oficina, u.nm_usuario, o.vl_avaliacao, o.url_maps, o.st_oficina, " +
                 "e.id_endereco, e.nm_logradouro, e.nr_logradouro, " +
                 "e.nm_cidade, e.nm_estado, e.nm_bairro, e.nm_zona_bairro, e.sq_cep, " +
                 "t.id_telefone, t.nr_ddi, t.nr_ddd, t.nr_telefone " +
@@ -88,54 +86,35 @@ class OficinaDaoImpl implements OficinaDao {
                 "LEFT JOIN t_pe_telefone t ON o.id_oficina = t.id_usuario " +
                 "WHERE o.id_oficina = ?";
 
-        try (Connection connection = DatabaseConnectionFactory.create();
-             PreparedStatement pstmt = connection.prepareStatement(sql)) {
-
-            pstmt.setLong(1, usuario.getId());
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            System.out.println("passou aqui");
+            pstmt.setLong(1, id);
             ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                if (oficina == null) {
-                    oficina = new Oficina(
-                            rs.getString("nm_usuario"),
-                            null,
-                            rs.getDouble("vl_avaliacao"),
-                            rs.getString("url_maps"),
-                            null,
-                            null,
-                            null,
-                            Cargo.OFICINA
-                    );
-                    oficina.setId(rs.getLong("id_oficina"));
-                }
-                adicionarEndereco(oficina, rs);
-                adicionarTelefone(oficina, rs);
+
+            if (rs.next()) {
+                Oficina oficina = new Oficina(
+                        rs.getString("nm_usuario"),
+                        null,
+                        rs.getDouble("vl_avaliacao"),
+                        rs.getString("url_maps"),
+                        rs.getString("st_oficina").toCharArray()[0],
+                        null,
+                        null,
+                        Cargo.OFICINA
+                );
+                oficina.setId(rs.getLong("id_oficina"));
+
+                do {
+                    adicionarEndereco(oficina, rs);
+                    adicionarTelefone(oficina, rs);
+                } while (rs.next());
+                return oficina;
+            } else {
+                throw new OficinaNotFound("Oficina não encontrada.");
             }
         }
-        return oficina;
     }
 
-    @Override
-    public Oficina findById(Long id, Connection connection) throws SQLException, OficinaNotFound {
-        String sql = "SELECT o.*, u.nm_usuario FROM t_pe_oficina o LEFT JOIN t_pe_usuario u ON o.id_oficina = u.id_usuario WHERE id_oficina = ?";
-        PreparedStatement pstmt = connection.prepareStatement(sql);
-        pstmt.setLong(1, id);
-        ResultSet rs = pstmt.executeQuery();
-        if (rs.next()) {
-            Oficina oficina = new Oficina(
-                    rs.getString("nm_usuario"),
-                    null,
-                    rs.getDouble("vl_avaliacao"),
-                    rs.getString("url_maps"),
-                    rs.getString("st_oficina").charAt(0),
-                    null,
-                    null,
-                    Cargo.OFICINA
-            );
-            oficina.setId(rs.getLong("id_oficina"));
-            return oficina;
-        }
-        throw new OficinaNotFound("Oficina não encontrada");
-    }
 
 
     private void adicionarEndereco(Oficina oficina, ResultSet rs) throws SQLException {

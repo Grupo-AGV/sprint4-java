@@ -4,6 +4,7 @@ import com.penaestrada.config.DatabaseConnectionFactory;
 import com.penaestrada.dao.ClienteDao;
 import com.penaestrada.dao.ClienteDaoFactory;
 import com.penaestrada.dto.ClienteDashboardDto;
+import com.penaestrada.dto.DetalhesClienteOrcamentoDto;
 import com.penaestrada.dto.DetalhesTelefoneDto;
 import com.penaestrada.dto.DetalhesVeiculoDto;
 import com.penaestrada.infra.exceptions.*;
@@ -47,27 +48,31 @@ class ClienteServiceImpl implements ClienteService {
 
     @Override
     public ClienteDashboardDto dashboard(String login) throws ClienteNotFound, SQLException, CpfInvalido {
-        Connection connection = DatabaseConnectionFactory.create();
-        Cliente cliente = dao.findByLogin(login, connection);
-        if (cliente == null)
-            throw new ClienteNotFound();
-        List<Veiculo> veiculos = veiculoService.findVeiculosByClienteId(cliente.getId());
-        List<Telefone> contatos = telefoneService.buscarTelefonesPorUsuario(cliente);
-        return new ClienteDashboardDto(
-                cliente.getId(), cliente.getNome(), cliente.getEmail(),
-                cliente.getCpf(), cliente.getDataNascimento().toString(),
-                veiculos.stream().map(v -> new DetalhesVeiculoDto(
-                        v.getId(), v.getMarca(), v.getModelo(),
-                        v.getAnoLancamento().toString(), v.getPlaca())).toList(),
-                contatos.stream().map(t -> new DetalhesTelefoneDto(t.getId(), t.getNumeroCompleto())).toList()
-        );
+        try (Connection connection = DatabaseConnectionFactory.create()) {
+            Cliente cliente = dao.findByLogin(login, connection);
+            if (cliente == null)
+                throw new ClienteNotFound();
+            List<Veiculo> veiculos = veiculoService.findVeiculosByClienteId(cliente.getId(), connection);
+            List<Telefone> contatos = telefoneService.buscarTelefonesPorUsuario(cliente, connection);
+            return new ClienteDashboardDto(
+                    cliente.getId(), cliente.getNome(), cliente.getEmail(),
+                    cliente.getCpf(), cliente.getDataNascimento().toString(),
+                    veiculos.stream().map(v -> new DetalhesVeiculoDto(
+                            v.getId(), v.getMarca(), v.getModelo(),
+                            v.getAnoLancamento().toString(), v.getPlaca())).toList(),
+                    contatos.stream().map(t -> new DetalhesTelefoneDto(t.getId(), t.getNumeroCompleto())).toList()
+            );
+        }
     }
 
     @Override
-    public Cliente detalhesOrcamentoCliente(Usuario usuario, Connection connection) throws SQLException, CpfInvalido {
+    public DetalhesClienteOrcamentoDto detalhesOrcamentoCliente(Usuario usuario, Connection connection) throws SQLException, CpfInvalido, ClienteNotFound {
         Cliente cliente = dao.findByLogin(usuario.getEmail(), connection);
-        List<Telefone> contatos = telefoneService.buscarTelefonesPorUsuario(usuario);
+        List<Telefone> contatos = telefoneService.buscarTelefonesPorUsuario(usuario, connection);
         cliente.setContatos(contatos);
-        return cliente;
+        return new DetalhesClienteOrcamentoDto(
+                cliente.getId(), cliente.getNome(), cliente.getEmail(),
+                cliente.getContatos().stream().map(t -> new DetalhesTelefoneDto(t.getId(), t.getNumeroCompleto())).toList()
+        );
     }
 }

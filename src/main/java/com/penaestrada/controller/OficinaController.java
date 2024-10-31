@@ -5,6 +5,7 @@ import com.penaestrada.dto.DetalhesOficinaDto;
 import com.penaestrada.infra.CookieName;
 import com.penaestrada.infra.exceptions.EmailExistente;
 import com.penaestrada.infra.exceptions.LoginNotFound;
+import com.penaestrada.infra.security.OficinaNotFound;
 import com.penaestrada.model.*;
 import com.penaestrada.service.OficinaService;
 import com.penaestrada.service.OficinaServiceFactory;
@@ -69,7 +70,7 @@ public class OficinaController {
             Usuario usuario = usuarioService.findByLogin(login);
             DetalhesOficinaDto oficina = oficinaService.detalhesOficinaPorUsuario(usuario);
             return Response.ok(oficina).build();
-        } catch (LoginNotFound e) {
+        } catch (LoginNotFound | OficinaNotFound e) {
             return Response.status(Response.Status.NOT_FOUND).entity(Map.of("error", e.getMessage())).build();
         } catch (SQLException e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)

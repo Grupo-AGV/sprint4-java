@@ -14,7 +14,7 @@ public interface VeiculoDao {
 
     Boolean existsByPlaca(String placa, Connection connection) throws SQLException;
 
-    List<Veiculo> findVeiculosByClienteId(Long id) throws SQLException;
+    List<Veiculo> findVeiculosByClienteId(Long id, Connection connection) throws SQLException;
 
     void deleteByIdEClienteId(Long idCliente, Long idVeiculo) throws SQLException, VeiculoNotFound, ExclusaoVeiculoUnico;
 

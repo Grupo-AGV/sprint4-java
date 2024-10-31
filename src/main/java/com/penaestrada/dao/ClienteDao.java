@@ -1,5 +1,6 @@
 package com.penaestrada.dao;
 
+import com.penaestrada.infra.exceptions.ClienteNotFound;
 import com.penaestrada.infra.exceptions.CpfInvalido;
 import com.penaestrada.model.Cliente;
 import com.penaestrada.model.Veiculo;
@@ -14,6 +15,6 @@ public interface ClienteDao {
 
     Boolean existsByCpf(String cpf, Connection connection) throws SQLException;
 
-    Cliente findByLogin(String login, Connection connection) throws CpfInvalido, SQLException;
+    Cliente findByLogin(String login, Connection connection) throws CpfInvalido, SQLException, ClienteNotFound;
 
 }

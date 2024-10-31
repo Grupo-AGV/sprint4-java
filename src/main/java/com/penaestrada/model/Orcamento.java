@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Orcamento {
+    private Long id;
     private Oficina oficina;
     private Veiculo veiculo;
     private String diagnosticoInicial;
@@ -42,6 +43,14 @@ public class Orcamento {
 
     public Cliente getUsuario() {
         return veiculo.getCliente();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setOficina(Oficina oficina) {

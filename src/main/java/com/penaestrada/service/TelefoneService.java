@@ -17,7 +17,7 @@ public interface TelefoneService {
 
     void adicionarTelefone(Usuario usuario, CriarTelefoneDto dto) throws SQLException;
 
-    List<Telefone> buscarTelefonesPorUsuario(Usuario usuario) throws SQLException;
+    List<Telefone> buscarTelefonesPorUsuario(Usuario usuario, Connection connection) throws SQLException;
 
     void atualizarTelefone(Usuario usuario, Long id, CriarTelefoneDto dto) throws SQLException, TelefoneNotFound;
 

@@ -15,7 +15,7 @@ public interface VeiculoService {
     void create(Veiculo veiculo, Connection connection) throws SQLException, VeiculoExistente;
     void adionarVeiculoAoCliente(Veiculo veiculo) throws SQLException, VeiculoExistente;
 
-    List<Veiculo> findVeiculosByClienteId(Long idCliente) throws SQLException;
+    List<Veiculo> findVeiculosByClienteId(Long idCliente, Connection connection) throws SQLException;
 
     void removerVeiculoDoCliente(Cliente cliente, Long id) throws SQLException, VeiculoNotFound, ExclusaoVeiculoUnico;
 

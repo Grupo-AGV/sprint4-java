@@ -50,13 +50,25 @@ class OficinaServiceImpl implements OficinaService {
     }
 
     @Override
-    public DetalhesOficinaDto detalhesOficinaPorUsuario(Usuario usuario) throws SQLException {
-        return mapearOficina(dao.findByUsuario(usuario));
+    public DetalhesOficinaDto detalhesOficinaPorUsuario(Usuario usuario) throws SQLException, OficinaNotFound {
+        try (Connection connection = DatabaseConnectionFactory.create()) {
+            return buscaDetalhesOficina(usuario.getId(), connection);
+        }
     }
 
     @Override
-    public Oficina findById(Long id, Connection connection) throws SQLException, OficinaNotFound {
+    public DetalhesOficinaDto detalhesOficinaPorId(Long id, Connection connection) throws SQLException, OficinaNotFound {
+        return buscaDetalhesOficina(id, connection);
+    }
+
+    @Override
+    public Oficina findById(Long id, Connection connection) throws OficinaNotFound, SQLException {
         return dao.findById(id, connection);
+    }
+
+    private DetalhesOficinaDto buscaDetalhesOficina(Long id, Connection connection) throws SQLException, OficinaNotFound {
+        Oficina oficina = dao.findById(id, connection);
+        return mapearOficina(oficina);
     }
 
     private DetalhesOficinaDto mapearOficina(Oficina oficina) {

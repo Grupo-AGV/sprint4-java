@@ -44,11 +44,10 @@ class VeiculoDaoImpl implements VeiculoDao {
     }
 
     @Override
-    public List<Veiculo> findVeiculosByClienteId(Long id) throws SQLException {
+    public List<Veiculo> findVeiculosByClienteId(Long id, Connection connection) throws SQLException {
         List<Veiculo> resultado = new ArrayList<>();
         String sql = "SELECT id_veiculo, ds_marca, ds_modelo, nr_ano_lancamento, ds_placa FROM t_pe_veiculo WHERE id_usuario = ?  ORDER BY id_veiculo DESC";
-        try (Connection connection = DatabaseConnectionFactory.create()) {
-            PreparedStatement pstmt = connection.prepareStatement(sql);
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setLong(1, id);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {

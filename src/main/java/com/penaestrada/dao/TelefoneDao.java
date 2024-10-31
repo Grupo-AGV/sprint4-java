@@ -13,7 +13,7 @@ public interface TelefoneDao {
 
         void create(Telefone telefone, Connection connection) throws SQLException;
 
-        List<Telefone> findAll(Usuario usuario) throws SQLException;
+        List<Telefone> findAll(Usuario usuario, Connection connection) throws SQLException;
 
         void update(Telefone telefone) throws SQLException, TelefoneNotFound;
 

@@ -17,7 +17,9 @@ public interface OficinaService {
 
     List<DetalhesOficinaDto> listarOficinas() throws SQLException;
 
-    DetalhesOficinaDto detalhesOficinaPorUsuario(Usuario usuario) throws SQLException;
+    DetalhesOficinaDto detalhesOficinaPorUsuario(Usuario usuario) throws SQLException, OficinaNotFound;
 
-    Oficina findById(Long id, Connection connection) throws SQLException, OficinaNotFound;
+    DetalhesOficinaDto detalhesOficinaPorId(Long id, Connection connection) throws SQLException, OficinaNotFound;
+
+    Oficina findById(Long id, Connection connection) throws OficinaNotFound, SQLException;
 }

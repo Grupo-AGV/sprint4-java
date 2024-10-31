@@ -30,8 +30,8 @@ class VeiculoServiceImpl implements VeiculoService {
     }
 
     @Override
-    public List<Veiculo> findVeiculosByClienteId(Long idCliente) throws SQLException {
-        return dao.findVeiculosByClienteId(idCliente);
+    public List<Veiculo> findVeiculosByClienteId(Long idCliente, Connection connection) throws SQLException {
+        return dao.findVeiculosByClienteId(idCliente, connection);
     }
 
     @Override

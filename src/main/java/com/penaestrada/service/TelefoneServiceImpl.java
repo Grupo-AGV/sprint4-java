@@ -32,8 +32,8 @@ class TelefoneServiceImpl implements TelefoneService {
     }
 
     @Override
-    public List<Telefone> buscarTelefonesPorUsuario(Usuario usuario) throws SQLException {
-        return dao.findAll(usuario);
+    public List<Telefone> buscarTelefonesPorUsuario(Usuario usuario, Connection connection) throws SQLException {
+        return dao.findAll(usuario, connection);
     }
 
     @Override

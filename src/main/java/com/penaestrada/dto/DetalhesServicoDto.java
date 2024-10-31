@@ -1,4 +1,9 @@
 package com.penaestrada.dto;
 
-public record DetalhesServicoDto() {
+public record DetalhesServicoDto(
+        Long id,
+        String description,
+        Double price,
+        String createdAt
+) {
 }

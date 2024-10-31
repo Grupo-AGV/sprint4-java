@@ -3,10 +3,7 @@ package com.penaestrada.controller;
 import com.penaestrada.dto.CriarOrcamentoDto;
 import com.penaestrada.dto.DetalhesOrcamentoDto;
 import com.penaestrada.infra.CookieName;
-import com.penaestrada.infra.exceptions.CpfInvalido;
-import com.penaestrada.infra.exceptions.LoginNotFound;
-import com.penaestrada.infra.exceptions.OrcamentoNotFound;
-import com.penaestrada.infra.exceptions.VeiculoNotFound;
+import com.penaestrada.infra.exceptions.*;
 import com.penaestrada.infra.security.OficinaNotFound;
 import com.penaestrada.model.Cargo;
 import com.penaestrada.model.Cliente;
@@ -37,7 +34,7 @@ public class OrcamentoController {
         try {
             Cargo cargo = Cargo.valueOf(tokenService.getCargo(token));
             if (cargo != Cargo.CLIENTE) {
-                return Response.status(Response.Status.FORBIDDEN).build();
+                return Response.status(Response.Status.FORBIDDEN).entity(Map.of("error", "Acesso negado.")).build();
             }
             String login = tokenService.getSubject(token);
             Cliente cliente = (Cliente) usuarioService.findByLogin(login);
@@ -61,7 +58,7 @@ public class OrcamentoController {
             Usuario usuario = usuarioService.findByLogin(login);
             DetalhesOrcamentoDto orcamento = orcamentoService.findByIdEUsuario(usuario, id);
             return Response.ok().entity(orcamento).build();
-        } catch (LoginNotFound | OrcamentoNotFound e) {
+        } catch (LoginNotFound | OrcamentoNotFound | ClienteNotFound e) {
             return Response.status(Response.Status.NOT_FOUND).entity(Map.of("error", e.getMessage())).build();
         } catch (CpfInvalido e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("error", e.getMessage())).build();

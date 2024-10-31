@@ -13,7 +13,5 @@ public interface OficinaDao {
 
     List<Oficina> findAll() throws SQLException;
 
-    Oficina findByUsuario(Usuario usuario) throws SQLException;
-
     Oficina findById(Long id, Connection connection) throws SQLException, OficinaNotFound;
 }
