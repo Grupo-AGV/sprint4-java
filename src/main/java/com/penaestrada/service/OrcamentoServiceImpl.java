@@ -43,8 +43,8 @@ class OrcamentoServiceImpl implements OrcamentoService {
     @Override
     public DetalhesOrcamentoDto findByIdEUsuario(Usuario usuario, Long id) throws SQLException, CpfInvalido, OrcamentoNotFound, ClienteNotFound, OficinaNotFound {
         try (Connection connection = DatabaseConnectionFactory.create()) {
-            Orcamento orcamento = dao.findByIdEDonoVeiculo(usuario.getId(), id, connection);
-            DetalhesClienteOrcamentoDto cliente = clienteService.detalhesOrcamentoCliente(usuario, connection);
+            Orcamento orcamento = dao.findByIdEUsuario(usuario, id, connection);
+            DetalhesClienteOrcamentoDto cliente = clienteService.detalhesOrcamentoCliente(orcamento.getUsuario(), connection);
             DetalhesOficinaDto oficina = oficinaService.detalhesOficinaPorId(orcamento.getOficina().getId(), connection);
             Veiculo veiculo = orcamento.getVeiculo();
             DetalhesVeiculoDto detalhesVeiculo = getDetalhesVeiculoDto(veiculo);
