@@ -5,10 +5,7 @@ import com.penaestrada.dao.OrcamentoDao;
 import com.penaestrada.dao.OrcamentoDaoFactory;
 import com.penaestrada.dto.*;
 import com.penaestrada.infra.DefaultDateFormatter;
-import com.penaestrada.infra.exceptions.ClienteNotFound;
-import com.penaestrada.infra.exceptions.CpfInvalido;
-import com.penaestrada.infra.exceptions.OrcamentoNotFound;
-import com.penaestrada.infra.exceptions.VeiculoNotFound;
+import com.penaestrada.infra.exceptions.*;
 import com.penaestrada.infra.security.OficinaNotFound;
 import com.penaestrada.model.*;
 
@@ -65,14 +62,24 @@ class OrcamentoServiceImpl implements OrcamentoService {
         }
     }
 
-    private static DetalhesVeiculoDto getDetalhesVeiculoDto(Veiculo veiculo) {
+    @Override
+    public void finalizarOrcamento(Usuario usuario, Long id) throws OrcamentoNotFound, SQLException, FinalizarOrcamentoSemServico, OrcamentoJaFinalizado {
+        verificarSeOrcamentoFinalizado(id);
+        dao.finalizarOrcamento(usuario, id);
+    }
+
+    public void verificarSeOrcamentoFinalizado(Long id) throws OrcamentoNotFound, OrcamentoJaFinalizado, SQLException {
+        dao.verificarOrcamentoFinalizado(id);
+    }
+
+    private DetalhesVeiculoDto getDetalhesVeiculoDto(Veiculo veiculo) {
         return new DetalhesVeiculoDto(
                 veiculo.getId(), veiculo.getMarca(), veiculo.getModelo(),
                 veiculo.getAnoLancamento().toString(), veiculo.getPlaca()
         );
     }
 
-    private static List<DetalhesServicoDto> getDetalhesServicoDtos(Orcamento orcamento) {
+    private List<DetalhesServicoDto> getDetalhesServicoDtos(Orcamento orcamento) {
         return orcamento.getServicos().stream().map(s -> new DetalhesServicoDto(
                 s.getId(), s.getDescricao(), s.getValorMaoDeObra(), s.getDataCriacao().toString()
         )).toList();

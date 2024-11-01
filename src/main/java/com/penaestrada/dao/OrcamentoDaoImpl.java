@@ -1,5 +1,8 @@
 package com.penaestrada.dao;
 
+import com.penaestrada.config.DatabaseConnectionFactory;
+import com.penaestrada.infra.exceptions.FinalizarOrcamentoSemServico;
+import com.penaestrada.infra.exceptions.OrcamentoJaFinalizado;
 import com.penaestrada.infra.exceptions.OrcamentoNotFound;
 import com.penaestrada.model.*;
 
@@ -28,8 +31,8 @@ class OrcamentoDaoImpl implements OrcamentoDao {
         Orcamento orcamento = null;
         String sql = """
                 SELECT orc.*, usu.id_usuario, usu.ds_email, ve.ds_marca, ve.ds_modelo, 
-                       ve.nr_ano_lancamento, ve.ds_placa, ser.ds_servico, ser.vl_mao_obra, 
-                       ser.dt_criacao AS "dt_criacao_servico"
+                       ve.nr_ano_lancamento, ve.ds_placa, ser.id_servico, ser.ds_servico, 
+                       ser.vl_mao_obra, ser.dt_criacao AS "dt_criacao_servico"
                 FROM t_pe_orcamento orc
                 INNER JOIN t_pe_veiculo ve ON ve.id_veiculo = orc.id_veiculo 
                 INNER JOIN t_pe_usuario usu ON usu.id_usuario = ve.id_usuario
@@ -53,6 +56,52 @@ class OrcamentoDaoImpl implements OrcamentoDao {
             return orcamento;
         }
     }
+
+    @Override
+    public void finalizarOrcamento(Usuario usuario, Long id) throws OrcamentoNotFound, FinalizarOrcamentoSemServico, SQLException {
+        String sqlCount = "SELECT COUNT(*), SUM(vl_mao_obra) FROM T_PE_SERVICO WHERE ID_ORCAMENTO = ?";
+        String sqlUpdate = "UPDATE T_PE_ORCAMENTO SET DT_FINALIZACAO = ?, VL_VALOR_FINAL = ? WHERE ID_ORCAMENTO = ?";
+
+        try (Connection connection = DatabaseConnectionFactory.create();
+             PreparedStatement pstmtSelect = connection.prepareStatement(sqlCount)) {
+            pstmtSelect.setLong(1, id);
+            try (ResultSet rs = pstmtSelect.executeQuery()) {
+                if (rs.next()) {
+                    if (rs.getInt(1) == 0)
+                        throw new FinalizarOrcamentoSemServico("Orçamento não possui serviços.");
+
+
+                    double valorTotal = rs.getDouble(2);
+
+                    try (PreparedStatement pstmtUpdate = connection.prepareStatement(sqlUpdate)) {
+                        pstmtUpdate.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
+                        pstmtUpdate.setDouble(2, valorTotal);
+                        pstmtUpdate.setLong(3, id);
+
+                        int rowsUpdated = pstmtUpdate.executeUpdate();
+                        if (rowsUpdated == 0)
+                            throw new OrcamentoNotFound("Orçamento não encontrado.");
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void verificarOrcamentoFinalizado(Long id) throws SQLException, OrcamentoJaFinalizado, OrcamentoNotFound {
+        String sqlCheckFinalizado = "SELECT DT_FINALIZACAO FROM T_PE_ORCAMENTO WHERE ID_ORCAMENTO = ?";
+        try (Connection connection = DatabaseConnectionFactory.create();
+             PreparedStatement pstmtCheck = connection.prepareStatement(sqlCheckFinalizado)) {
+            pstmtCheck.setLong(1, id);
+            try (ResultSet rsCheck = pstmtCheck.executeQuery()) {
+                if (rsCheck.next() && rsCheck.getTimestamp("DT_FINALIZACAO") != null)
+                    throw new OrcamentoJaFinalizado("O orçamento já foi finalizado.");
+                else
+                    throw new OrcamentoNotFound("Orçamento não encontrado.");
+            }
+        }
+    }
+
 
     private static Orcamento formatarOrcamento(PreparedStatement pstmt) throws SQLException, OrcamentoNotFound {
         Orcamento orcamento;
@@ -98,6 +147,7 @@ class OrcamentoDaoImpl implements OrcamentoDao {
                     rs.getDouble("vl_mao_obra"),
                     rs.getTimestamp("dt_criacao_servico").toLocalDateTime()
             );
+            servico.setId(rs.getLong("id_servico"));
             orcamento.getServicos().add(servico);
         } while (rs.next());
         return orcamento;

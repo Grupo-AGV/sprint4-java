@@ -67,4 +67,30 @@ public class OrcamentoController {
                     .entity(Map.of("error", e.getMessage())).build();
         }
     }
+
+    @PUT
+    @Path("/finish")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response finalizarOrcamento(@CookieParam(CookieName.TOKEN) String token, @QueryParam("id") Long id) {
+        if (id == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("error", "Id do orçamento não informado.")).build();
+        }
+        try {
+            Cargo cargo = Cargo.valueOf(tokenService.getCargo(token));
+            if (cargo != Cargo.OFICINA) {
+                return Response.status(Response.Status.FORBIDDEN).entity(Map.of("error", "Acesso negado.")).build();
+            }
+            String login = tokenService.getSubject(token);
+            Usuario usuario = usuarioService.findByLogin(login);
+            orcamentoService.finalizarOrcamento(usuario, id);
+            return Response.ok().build();
+        } catch (LoginNotFound | OrcamentoNotFound e) {
+            return Response.status(Response.Status.NOT_FOUND).entity(Map.of("error", e.getMessage())).build();
+        } catch (FinalizarOrcamentoSemServico | OrcamentoJaFinalizado e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("error", e.getMessage())).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(Map.of("error", e.getMessage())).build();
+        }
+    }
 }
