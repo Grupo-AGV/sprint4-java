@@ -1,23 +1,22 @@
 package com.penaestrada.controller;
 
 import com.penaestrada.dto.CriarOrcamentoDto;
+import com.penaestrada.dto.CriarServicoDto;
 import com.penaestrada.dto.DetalhesOrcamentoDto;
 import com.penaestrada.infra.CookieName;
 import com.penaestrada.infra.exceptions.*;
-import com.penaestrada.infra.security.OficinaNotFound;
+import com.penaestrada.infra.exceptions.OficinaNotFound;
 import com.penaestrada.model.Cargo;
 import com.penaestrada.model.Cliente;
 import com.penaestrada.model.Usuario;
-import com.penaestrada.service.OrcamentoService;
-import com.penaestrada.service.OrcamentoServiceFactory;
-import com.penaestrada.service.UsuarioService;
-import com.penaestrada.service.UsuarioServiceFactory;
+import com.penaestrada.service.*;
 import com.penaestrada.service.security.TokenService;
 import com.penaestrada.service.security.TokenServiceFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
 import java.util.Map;
 
 @Path("/estimate")
@@ -26,6 +25,7 @@ public class OrcamentoController {
     private final OrcamentoService orcamentoService = OrcamentoServiceFactory.create();
     private final TokenService tokenService = TokenServiceFactory.create();
     private final UsuarioService usuarioService = UsuarioServiceFactory.create();
+    private final ServicoService servicoService = ServicoServiceFactory.create();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -46,6 +46,26 @@ public class OrcamentoController {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Map.of("error", e.getMessage())).build();
         }
     }
+
+    @GET
+    @Path("/all")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response listarTodosOrcamentosPorUsuario(@CookieParam(CookieName.TOKEN) String token) {
+        try {
+            String login = tokenService.getSubject(token);
+            Usuario usuario = usuarioService.findByLogin(login);
+            List<DetalhesOrcamentoDto> orcamentos = orcamentoService.findByUsuario(usuario);
+            return Response.ok(orcamentos).build();
+        } catch (LoginNotFound | ClienteNotFound e) {
+            return Response.status(Response.Status.NOT_FOUND).entity(Map.of("error", e.getMessage())).build();
+        } catch (CpfInvalido e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("error", e.getMessage())).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(Map.of("error", e.getMessage())).build();
+        }
+    }
+
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -87,6 +107,31 @@ public class OrcamentoController {
         } catch (LoginNotFound | OrcamentoNotFound e) {
             return Response.status(Response.Status.NOT_FOUND).entity(Map.of("error", e.getMessage())).build();
         } catch (FinalizarOrcamentoSemServico | OrcamentoJaFinalizado e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("error", e.getMessage())).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(Map.of("error", e.getMessage())).build();
+        }
+    }
+
+    @POST
+    @Path("/service")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response criarServico(@CookieParam(CookieName.TOKEN) String token, @QueryParam("id") Long id, CriarServicoDto dto) {
+        if (id == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("error", "Id do orçamento não informado.")).build();
+        }
+        try {
+            String login = tokenService.getSubject(token);
+            Usuario usuario = usuarioService.findByLogin(login);
+            orcamentoService.verificarSeOrcamentoDoUsuario(usuario, id);
+            orcamentoService.verificarSeOrcamentoFinalizado(id);
+            servicoService.adicionarServico(id, dto);
+            return Response.status(Response.Status.CREATED).build();
+        } catch (LoginNotFound | OrcamentoNotFound e) {
+            return Response.status(Response.Status.NOT_FOUND).entity(Map.of("error", e.getMessage())).build();
+        } catch (OrcamentoJaFinalizado e) {
             return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("error", e.getMessage())).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)

@@ -1,7 +1,7 @@
 package com.penaestrada.dao;
 
 import com.penaestrada.config.DatabaseConnectionFactory;
-import com.penaestrada.infra.security.OficinaNotFound;
+import com.penaestrada.infra.exceptions.OficinaNotFound;
 import com.penaestrada.model.*;
 
 import java.sql.Connection;
@@ -87,7 +87,6 @@ class OficinaDaoImpl implements OficinaDao {
                 "WHERE o.id_oficina = ?";
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            System.out.println("passou aqui");
             pstmt.setLong(1, id);
             ResultSet rs = pstmt.executeQuery();
 
@@ -114,7 +113,6 @@ class OficinaDaoImpl implements OficinaDao {
             }
         }
     }
-
 
 
     private void adicionarEndereco(Oficina oficina, ResultSet rs) throws SQLException {

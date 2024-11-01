@@ -8,6 +8,7 @@ import com.penaestrada.model.Usuario;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 public interface OrcamentoDao {
 
@@ -19,4 +20,8 @@ public interface OrcamentoDao {
     void finalizarOrcamento(Usuario usuario, Long id) throws OrcamentoNotFound, FinalizarOrcamentoSemServico, SQLException, OrcamentoJaFinalizado;
 
     void verificarOrcamentoFinalizado(Long id) throws SQLException, OrcamentoJaFinalizado, OrcamentoNotFound;
+
+    void verificarSeOrcamentoDoUsuario(Usuario usuario, Long idOrcamento) throws SQLException, OrcamentoNotFound;
+
+    List<Orcamento> findByUsuario(Usuario usuario, Connection connection) throws SQLException;
 }

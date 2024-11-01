@@ -5,7 +5,7 @@ import com.penaestrada.dto.DetalhesOficinaDto;
 import com.penaestrada.infra.CookieName;
 import com.penaestrada.infra.exceptions.EmailExistente;
 import com.penaestrada.infra.exceptions.LoginNotFound;
-import com.penaestrada.infra.security.OficinaNotFound;
+import com.penaestrada.infra.exceptions.OficinaNotFound;
 import com.penaestrada.model.*;
 import com.penaestrada.service.OficinaService;
 import com.penaestrada.service.OficinaServiceFactory;

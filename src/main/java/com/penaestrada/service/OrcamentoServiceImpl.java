@@ -6,12 +6,13 @@ import com.penaestrada.dao.OrcamentoDaoFactory;
 import com.penaestrada.dto.*;
 import com.penaestrada.infra.DefaultDateFormatter;
 import com.penaestrada.infra.exceptions.*;
-import com.penaestrada.infra.security.OficinaNotFound;
+import com.penaestrada.infra.exceptions.OficinaNotFound;
 import com.penaestrada.model.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 class OrcamentoServiceImpl implements OrcamentoService {
@@ -35,6 +36,36 @@ class OrcamentoServiceImpl implements OrcamentoService {
             connection.rollback();
             throw e;
         }
+    }
+
+    @Override
+    public List<DetalhesOrcamentoDto> findByUsuario(Usuario usuario) throws SQLException, ClienteNotFound, CpfInvalido, OficinaNotFound {
+        List<DetalhesOrcamentoDto> retorno = new ArrayList<>();
+        try (Connection connection = DatabaseConnectionFactory.create()) {
+            List<Orcamento> orcamentos = dao.findByUsuario(usuario, connection);
+            for (Orcamento orcamento : orcamentos) {
+                DetalhesClienteOrcamentoDto cliente = clienteService.detalhesOrcamentoCliente(orcamento.getUsuario(), connection);
+                DetalhesOficinaDto oficina = oficinaService.detalhesOficinaPorId(orcamento.getOficina().getId(), connection);
+                Veiculo veiculo = orcamento.getVeiculo();
+                DetalhesVeiculoDto detalhesVeiculo = getDetalhesVeiculoDto(veiculo);
+                String dataFinalizacao = null;
+                if (orcamento.getDataFinalizacao() != null) {
+                    dataFinalizacao = orcamento.getDataFinalizacao().toString();
+                }
+                Double valorFinal = null;
+                if (orcamento.getValorFinal() != 0.0) {
+                    valorFinal = orcamento.getValorFinal();
+                }
+                DetalhesOrcamentoDto orcamentoDto = new DetalhesOrcamentoDto(
+                        orcamento.getId(), cliente, detalhesVeiculo, oficina, orcamento.getDiagnosticoInicial(),
+                        orcamento.getDataAgendamento().toString(), orcamento.getDataCriacao().toString(), valorFinal,
+                        dataFinalizacao, new ArrayList<>()
+                );
+                retorno.add(orcamentoDto);
+            }
+        }
+
+        return retorno;
     }
 
     @Override
@@ -68,8 +99,14 @@ class OrcamentoServiceImpl implements OrcamentoService {
         dao.finalizarOrcamento(usuario, id);
     }
 
+    @Override
     public void verificarSeOrcamentoFinalizado(Long id) throws OrcamentoNotFound, OrcamentoJaFinalizado, SQLException {
         dao.verificarOrcamentoFinalizado(id);
+    }
+
+    @Override
+    public void verificarSeOrcamentoDoUsuario(Usuario usuario, Long id) throws OrcamentoNotFound, SQLException {
+        dao.verificarSeOrcamentoDoUsuario(usuario, id);
     }
 
     private DetalhesVeiculoDto getDetalhesVeiculoDto(Veiculo veiculo) {

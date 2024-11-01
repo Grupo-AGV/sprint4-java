@@ -3,7 +3,7 @@ package com.penaestrada.service;
 import com.penaestrada.dto.CriarOficinaDto;
 import com.penaestrada.dto.DetalhesOficinaDto;
 import com.penaestrada.infra.exceptions.EmailExistente;
-import com.penaestrada.infra.security.OficinaNotFound;
+import com.penaestrada.infra.exceptions.OficinaNotFound;
 import com.penaestrada.model.Oficina;
 import com.penaestrada.model.Usuario;
 

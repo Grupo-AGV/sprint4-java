@@ -37,8 +37,6 @@ public class SecurityFilter implements ContainerRequestFilter {
     }
 
     private boolean isPublicPath(String path) {
-        // Adicione suas rotas públicas aqui
-        System.out.println(path);
         return path.endsWith("signup") || path.equals("auth/login");
     }
 

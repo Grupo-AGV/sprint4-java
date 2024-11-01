@@ -1,8 +1,7 @@
 package com.penaestrada.dao;
 
-import com.penaestrada.infra.security.OficinaNotFound;
+import com.penaestrada.infra.exceptions.OficinaNotFound;
 import com.penaestrada.model.Oficina;
-import com.penaestrada.model.Usuario;
 
 import java.sql.Connection;
 import java.sql.SQLException;
