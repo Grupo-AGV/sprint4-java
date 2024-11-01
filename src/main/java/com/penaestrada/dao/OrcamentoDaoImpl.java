@@ -9,7 +9,9 @@ import com.penaestrada.model.*;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 class OrcamentoDaoImpl implements OrcamentoDao {
 
@@ -31,17 +33,20 @@ class OrcamentoDaoImpl implements OrcamentoDao {
     @Override
     public List<Orcamento> findByUsuario(Usuario usuario, Connection connection) throws SQLException {
         List<Orcamento> retorno = new ArrayList<>();
+        Map<Long, Orcamento> orcamentos = new HashMap<>();
         String sql = """
-                SELECT orc.*, usu.id_usuario, usu.ds_email, ve.ds_marca, ve.ds_modelo, 
-                        ve.nr_ano_lancamento, ve.ds_placa
-                FROM t_pe_orcamento orc
-                INNER JOIN t_pe_veiculo ve ON ve.id_veiculo = orc.id_veiculo 
-                INNER JOIN t_pe_usuario usu ON usu.id_usuario = ve.id_usuario
-                INNER JOIN t_pe_oficina ofi ON ofi.id_oficina = orc.id_oficina
-                WHERE (usu.id_usuario = ? AND ? = 'CLIENTE')
-                   OR (ofi.id_oficina = ? AND ? = 'OFICINA')
-                ORDER BY orc.dt_criacao DESC 
-                """;
+            SELECT orc.*, usu.id_usuario, usu.ds_email, ve.ds_marca, ve.ds_modelo, 
+                   ve.nr_ano_lancamento, ve.ds_placa, ser.id_servico, ser.ds_servico, 
+                   ser.vl_mao_obra, ser.dt_criacao AS "dt_criacao_servico"
+            FROM t_pe_orcamento orc
+            INNER JOIN t_pe_veiculo ve ON ve.id_veiculo = orc.id_veiculo 
+            INNER JOIN t_pe_usuario usu ON usu.id_usuario = ve.id_usuario
+            INNER JOIN t_pe_oficina ofi ON ofi.id_oficina = orc.id_oficina
+            LEFT JOIN t_pe_servico ser ON ser.id_orcamento = orc.id_orcamento
+            WHERE (usu.id_usuario = ? AND ? = 'CLIENTE')
+               OR (ofi.id_oficina = ? AND ? = 'OFICINA')
+            ORDER BY orc.dt_criacao DESC 
+            """;
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             Long id = usuario.getId();
             String cargo = usuario.getCargo().toString();
@@ -52,33 +57,27 @@ class OrcamentoDaoImpl implements OrcamentoDao {
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                Cliente cliente = new Cliente(rs.getString("ds_email"), null, Cargo.CLIENTE);
-                cliente.setId(rs.getLong("id_usuario"));
-                Veiculo veiculo = new Veiculo(cliente,
-                        rs.getString("ds_marca"),
-                        rs.getString("ds_modelo"),
-                        rs.getString("ds_placa"),
-                        rs.getInt("nr_ano_lancamento")
-                );
-                veiculo.setId(rs.getLong("id_veiculo"));
-
-                LocalDateTime dataFinalizacao = null;
-                if (rs.getTimestamp("dt_finalizacao") != null) {
-                    dataFinalizacao = rs.getTimestamp("dt_finalizacao").toLocalDateTime();
+                long idOrcamento = rs.getLong("id_orcamento");
+                Orcamento orcamento = orcamentos.get(idOrcamento);
+                if (orcamento == null) {
+                    orcamento = getOrcamento(rs);
+                    orcamento.setId(idOrcamento);
+                    Oficina oficina = new Oficina(null, null, Cargo.OFICINA);
+                    oficina.setId(rs.getLong("id_oficina"));
+                    orcamento.setOficina(oficina);
+                    retorno.add(orcamento);
+                    orcamentos.put(idOrcamento, orcamento);
                 }
-
-                Orcamento orcamento = new Orcamento(veiculo,
-                        rs.getString("ds_diagnostico_inicial"),
-                        rs.getTimestamp("dt_agendamento").toLocalDateTime(),
-                        rs.getTimestamp("dt_criacao").toLocalDateTime(),
-                        dataFinalizacao,
-                        rs.getDouble("vl_valor_final")
-                );
-                orcamento.setId(rs.getLong("id_orcamento"));
-                Oficina oficina = new Oficina(null, null, Cargo.OFICINA);
-                oficina.setId(rs.getLong("id_oficina"));
-                orcamento.setOficina(oficina);
-                retorno.add(orcamento);
+                orcamento = orcamentos.get(idOrcamento);
+                do {
+                    Servico servico = new Servico(
+                            rs.getString("ds_servico"),
+                            rs.getDouble("vl_mao_obra"),
+                            rs.getTimestamp("dt_criacao_servico").toLocalDateTime()
+                    );
+                    servico.setId(rs.getLong("id_servico"));
+                    orcamento.getServicos().add(servico);
+                } while (rs.getString("ds_servico") == null);
             }
         }
         return retorno;
@@ -180,7 +179,33 @@ class OrcamentoDaoImpl implements OrcamentoDao {
             if (!rs.next())
                 throw new OrcamentoNotFound("Orçamento não encontrado");
         }
+    }
 
+    private static Orcamento getOrcamento(ResultSet rs) throws SQLException {
+        Orcamento orcamento;
+        Cliente cliente = new Cliente(rs.getString("ds_email"), null, Cargo.CLIENTE);
+        cliente.setId(rs.getLong("id_usuario"));
+        Veiculo veiculo = new Veiculo(cliente,
+                rs.getString("ds_marca"),
+                rs.getString("ds_modelo"),
+                rs.getString("ds_placa"),
+                rs.getInt("nr_ano_lancamento")
+        );
+        veiculo.setId(rs.getLong("id_veiculo"));
+
+        LocalDateTime dataFinalizacao = null;
+        if (rs.getTimestamp("dt_finalizacao") != null) {
+            dataFinalizacao = rs.getTimestamp("dt_finalizacao").toLocalDateTime();
+        }
+
+        orcamento = new Orcamento(veiculo,
+                rs.getString("ds_diagnostico_inicial"),
+                rs.getTimestamp("dt_agendamento").toLocalDateTime(),
+                rs.getTimestamp("dt_criacao").toLocalDateTime(),
+                dataFinalizacao,
+                rs.getDouble("vl_valor_final")
+        );
+        return orcamento;
     }
 
     private static Orcamento formatarOrcamento(PreparedStatement pstmt) throws SQLException, OrcamentoNotFound {
@@ -188,28 +213,7 @@ class OrcamentoDaoImpl implements OrcamentoDao {
         ResultSet rs = pstmt.executeQuery();
 
         if (rs.next()) {
-            Cliente cliente = new Cliente(rs.getString("ds_email"), null, Cargo.CLIENTE);
-            cliente.setId(rs.getLong("id_usuario"));
-            Veiculo veiculo = new Veiculo(cliente,
-                    rs.getString("ds_marca"),
-                    rs.getString("ds_modelo"),
-                    rs.getString("ds_placa"),
-                    rs.getInt("nr_ano_lancamento")
-            );
-            veiculo.setId(rs.getLong("id_veiculo"));
-
-            LocalDateTime dataFinalizacao = null;
-            if (rs.getTimestamp("dt_finalizacao") != null) {
-                dataFinalizacao = rs.getTimestamp("dt_finalizacao").toLocalDateTime();
-            }
-
-            orcamento = new Orcamento(veiculo,
-                    rs.getString("ds_diagnostico_inicial"),
-                    rs.getTimestamp("dt_agendamento").toLocalDateTime(),
-                    rs.getTimestamp("dt_criacao").toLocalDateTime(),
-                    dataFinalizacao,
-                    rs.getDouble("vl_valor_final")
-            );
+            orcamento = getOrcamento(rs);
             orcamento.setId(rs.getLong("id_orcamento"));
             Oficina oficina = new Oficina(null, null, Cargo.OFICINA);
             oficina.setId(rs.getLong("id_oficina"));

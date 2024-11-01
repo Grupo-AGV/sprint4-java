@@ -44,27 +44,10 @@ class OrcamentoServiceImpl implements OrcamentoService {
         try (Connection connection = DatabaseConnectionFactory.create()) {
             List<Orcamento> orcamentos = dao.findByUsuario(usuario, connection);
             for (Orcamento orcamento : orcamentos) {
-                DetalhesClienteOrcamentoDto cliente = clienteService.detalhesOrcamentoCliente(orcamento.getUsuario(), connection);
-                DetalhesOficinaDto oficina = oficinaService.detalhesOficinaPorId(orcamento.getOficina().getId(), connection);
-                Veiculo veiculo = orcamento.getVeiculo();
-                DetalhesVeiculoDto detalhesVeiculo = getDetalhesVeiculoDto(veiculo);
-                String dataFinalizacao = null;
-                if (orcamento.getDataFinalizacao() != null) {
-                    dataFinalizacao = orcamento.getDataFinalizacao().toString();
-                }
-                Double valorFinal = null;
-                if (orcamento.getValorFinal() != 0.0) {
-                    valorFinal = orcamento.getValorFinal();
-                }
-                DetalhesOrcamentoDto orcamentoDto = new DetalhesOrcamentoDto(
-                        orcamento.getId(), cliente, detalhesVeiculo, oficina, orcamento.getDiagnosticoInicial(),
-                        orcamento.getDataAgendamento().toString(), orcamento.getDataCriacao().toString(), valorFinal,
-                        dataFinalizacao, new ArrayList<>()
-                );
+                DetalhesOrcamentoDto orcamentoDto = getDetalhesOrcamentoDto(orcamento, connection);
                 retorno.add(orcamentoDto);
             }
         }
-
         return retorno;
     }
 
@@ -72,25 +55,29 @@ class OrcamentoServiceImpl implements OrcamentoService {
     public DetalhesOrcamentoDto findByIdEUsuario(Usuario usuario, Long id) throws SQLException, CpfInvalido, OrcamentoNotFound, ClienteNotFound, OficinaNotFound {
         try (Connection connection = DatabaseConnectionFactory.create()) {
             Orcamento orcamento = dao.findByIdEUsuario(usuario, id, connection);
-            DetalhesClienteOrcamentoDto cliente = clienteService.detalhesOrcamentoCliente(orcamento.getUsuario(), connection);
-            DetalhesOficinaDto oficina = oficinaService.detalhesOficinaPorId(orcamento.getOficina().getId(), connection);
-            Veiculo veiculo = orcamento.getVeiculo();
-            DetalhesVeiculoDto detalhesVeiculo = getDetalhesVeiculoDto(veiculo);
-            List<DetalhesServicoDto> servicos = getDetalhesServicoDtos(orcamento);
-            String dataFinalizacao = null;
-            if (orcamento.getDataFinalizacao() != null) {
-                dataFinalizacao = orcamento.getDataFinalizacao().toString();
-            }
-            Double valorFinal = null;
-            if (orcamento.getValorFinal() != 0.0) {
-                valorFinal = orcamento.getValorFinal();
-            }
-            return new DetalhesOrcamentoDto(
-                    orcamento.getId(), cliente, detalhesVeiculo, oficina, orcamento.getDiagnosticoInicial(),
-                    orcamento.getDataAgendamento().toString(), orcamento.getDataCriacao().toString(), valorFinal,
-                    dataFinalizacao, servicos
-            );
+            return getDetalhesOrcamentoDto(orcamento, connection);
         }
+    }
+
+    private DetalhesOrcamentoDto getDetalhesOrcamentoDto(Orcamento orcamento, Connection connection) throws SQLException, CpfInvalido, ClienteNotFound, OficinaNotFound {
+        DetalhesClienteOrcamentoDto cliente = clienteService.detalhesOrcamentoCliente(orcamento.getUsuario(), connection);
+        DetalhesOficinaDto oficina = oficinaService.detalhesOficinaPorId(orcamento.getOficina().getId(), connection);
+        Veiculo veiculo = orcamento.getVeiculo();
+        DetalhesVeiculoDto detalhesVeiculo = getDetalhesVeiculoDto(veiculo);
+        List<DetalhesServicoDto> servicos = getDetalhesServicoDtos(orcamento);
+        String dataFinalizacao = null;
+        if (orcamento.getDataFinalizacao() != null) {
+            dataFinalizacao = orcamento.getDataFinalizacao().toString();
+        }
+        Double valorFinal = null;
+        if (orcamento.getValorFinal() != 0.0) {
+            valorFinal = orcamento.getValorFinal();
+        }
+        return new DetalhesOrcamentoDto(
+                orcamento.getId(), cliente, detalhesVeiculo, oficina, orcamento.getDiagnosticoInicial(),
+                orcamento.getDataAgendamento().toString(), orcamento.getDataCriacao().toString(), valorFinal,
+                dataFinalizacao, servicos
+        );
     }
 
     @Override
