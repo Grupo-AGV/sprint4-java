@@ -4,6 +4,7 @@ import com.penaestrada.config.DatabaseConnectionFactory;
 import com.penaestrada.dto.ClienteDashboardDto;
 import com.penaestrada.dto.CriarClienteDto;
 import com.penaestrada.dto.CriarVeiculoDto;
+import com.penaestrada.dto.IniciarChatBot;
 import com.penaestrada.infra.CookieName;
 import com.penaestrada.infra.exceptions.*;
 import com.penaestrada.model.Cargo;
@@ -107,6 +108,27 @@ public class ClienteController {
             return Response.status(Response.Status.NOT_FOUND).entity(Map.of("error", e.getMessage())).build();
         } catch (ExclusaoVeiculoUnico e) {
             return Response.status(Response.Status.CONFLICT).entity(Map.of("error", "Você não pode excluir seu uníco veículo.")).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(Map.of("error", e.getMessage())).build();
+        }
+    }
+
+    @GET
+    @Path("/chatbot/init")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response iniciarChat(@CookieParam(CookieName.TOKEN) String token) {
+        try {
+            Cargo cargo = Cargo.valueOf(tokenService.getCargo(token));
+            if (cargo != Cargo.CLIENTE) {
+                return Response.status(Response.Status.FORBIDDEN).entity(Map.of("error", "Acesso negado.")).build();
+            }
+            String login = tokenService.getSubject(token);
+            Cliente cliente = (Cliente) usuarioService.findByLogin(login);
+            IniciarChatBot response = clienteService.iniciarChatBot(cliente);
+            return Response.ok().entity(response).build();
+        }  catch (LoginNotFound e) {
+            return Response.status(Response.Status.NOT_FOUND).entity(Map.of("error", e.getMessage())).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity(Map.of("error", e.getMessage())).build();

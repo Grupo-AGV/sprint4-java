@@ -87,7 +87,7 @@ class OrcamentoServiceImpl implements OrcamentoService {
     }
 
     @Override
-    public void verificarSeOrcamentoFinalizado(Long id) throws OrcamentoNotFound, OrcamentoJaFinalizado, SQLException {
+    public void verificarSeOrcamentoFinalizado(Long id) throws OrcamentoJaFinalizado, SQLException {
         dao.verificarOrcamentoFinalizado(id);
     }
 

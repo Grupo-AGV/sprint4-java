@@ -65,8 +65,8 @@ class TelefoneServiceImpl implements TelefoneService {
     }
 
     private Telefone formatarCampos(CriarTelefoneDto dto) {
-        Integer ddi = Integer.parseInt(dto.ddi().replace("(", "").replace(")", ""));
-        Integer ddd = Integer.parseInt(dto.ddd().replace("+", ""));
+        Integer ddi = Integer.parseInt(dto.ddi().replace("+", ""));
+        Integer ddd = Integer.parseInt(dto.ddd().replace("(", "").replace(")", ""));
         Integer number = Integer.parseInt(dto.number().replace("-", ""));
         return new Telefone(null, ddi, ddd, number);
     }

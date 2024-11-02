@@ -25,7 +25,7 @@ public class Telefone {
         } else {
             numeroFormatado = numero;
         }
-        return String.format("+%d (%d) %s", getDdd(), getDdi(), numeroFormatado);
+        return String.format("+%d (%d) %s", getDdi(), getDdd(), numeroFormatado);
     }
 
     public Long getId() {

@@ -19,7 +19,7 @@ public interface OrcamentoDao {
 
     void finalizarOrcamento(Usuario usuario, Long id) throws OrcamentoNotFound, FinalizarOrcamentoSemServico, SQLException, OrcamentoJaFinalizado;
 
-    void verificarOrcamentoFinalizado(Long id) throws SQLException, OrcamentoJaFinalizado, OrcamentoNotFound;
+    void verificarOrcamentoFinalizado(Long id) throws SQLException, OrcamentoJaFinalizado;
 
     void verificarSeOrcamentoDoUsuario(Usuario usuario, Long idOrcamento) throws SQLException, OrcamentoNotFound;
 

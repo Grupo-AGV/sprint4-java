@@ -3,15 +3,9 @@ package com.penaestrada.service;
 import com.penaestrada.config.DatabaseConnectionFactory;
 import com.penaestrada.dao.ClienteDao;
 import com.penaestrada.dao.ClienteDaoFactory;
-import com.penaestrada.dto.ClienteDashboardDto;
-import com.penaestrada.dto.DetalhesClienteOrcamentoDto;
-import com.penaestrada.dto.DetalhesTelefoneDto;
-import com.penaestrada.dto.DetalhesVeiculoDto;
+import com.penaestrada.dto.*;
 import com.penaestrada.infra.exceptions.*;
-import com.penaestrada.model.Cliente;
-import com.penaestrada.model.Telefone;
-import com.penaestrada.model.Usuario;
-import com.penaestrada.model.Veiculo;
+import com.penaestrada.model.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -26,6 +20,8 @@ class ClienteServiceImpl implements ClienteService {
     private final VeiculoService veiculoService = VeiculoServiceFactory.create();
 
     private final TelefoneService telefoneService = TelefoneServiceFactory.create();
+
+    private final OficinaService oficinaService = OficinaServiceFactory.create();
 
     @Override
     public void create(Cliente cliente) throws SQLException, CpfExistente, EmailExistente, VeiculoExistente {
@@ -74,5 +70,19 @@ class ClienteServiceImpl implements ClienteService {
                 cliente.getId(), cliente.getNome(), cliente.getEmail(),
                 cliente.getContatos().stream().map(t -> new DetalhesTelefoneDto(t.getId(), t.getNumeroCompleto())).toList()
         );
+    }
+
+    @Override
+    public IniciarChatBot iniciarChatBot(Cliente cliente) throws ClienteNotFound, SQLException, CpfInvalido {
+        try (Connection connection = DatabaseConnectionFactory.create()) {
+            Cliente c = dao.findByLogin(cliente.getEmail(), connection);
+            List<Veiculo> veiculos = veiculoService.findVeiculosByClienteId(c.getId(), connection);
+            List<DetalhesOficinaDto> oficinas = oficinaService.listarOficinas();
+            List<ResponseSimples> veiculosDto = veiculos.stream().map(v -> new ResponseSimples(v.getId(), v.getMarca() + " " + v.getModelo() + " " + v.getAnoLancamento())).toList();
+            List<ResponseSimples> oficinasDto = oficinas.stream().map(o -> new ResponseSimples(o.id(), o.name())).toList();
+            return new IniciarChatBot(
+                    c.getNome(), veiculosDto, oficinasDto
+            );
+        }
     }
 }

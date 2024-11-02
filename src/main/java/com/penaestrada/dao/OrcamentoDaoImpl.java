@@ -68,8 +68,7 @@ class OrcamentoDaoImpl implements OrcamentoDao {
                     retorno.add(orcamento);
                     orcamentos.put(idOrcamento, orcamento);
                 }
-                orcamento = orcamentos.get(idOrcamento);
-                do {
+                if (rs.getString("ds_servico") != null) {
                     Servico servico = new Servico(
                             rs.getString("ds_servico"),
                             rs.getDouble("vl_mao_obra"),
@@ -77,7 +76,7 @@ class OrcamentoDaoImpl implements OrcamentoDao {
                     );
                     servico.setId(rs.getLong("id_servico"));
                     orcamento.getServicos().add(servico);
-                } while (rs.getString("ds_servico") == null);
+                }
             }
         }
         return retorno;
@@ -145,7 +144,7 @@ class OrcamentoDaoImpl implements OrcamentoDao {
     }
 
     @Override
-    public void verificarOrcamentoFinalizado(Long id) throws SQLException, OrcamentoJaFinalizado, OrcamentoNotFound {
+    public void verificarOrcamentoFinalizado(Long id) throws SQLException, OrcamentoJaFinalizado {
         String sqlCheckFinalizado = "SELECT DT_FINALIZACAO FROM T_PE_ORCAMENTO WHERE ID_ORCAMENTO = ?";
         try (Connection connection = DatabaseConnectionFactory.create();
              PreparedStatement pstmtCheck = connection.prepareStatement(sqlCheckFinalizado)) {
@@ -153,8 +152,6 @@ class OrcamentoDaoImpl implements OrcamentoDao {
             try (ResultSet rsCheck = pstmtCheck.executeQuery()) {
                 if (rsCheck.next() && rsCheck.getTimestamp("DT_FINALIZACAO") != null)
                     throw new OrcamentoJaFinalizado("O orçamento já foi finalizado.");
-                else
-                    throw new OrcamentoNotFound("Orçamento não encontrado.");
             }
         }
     }

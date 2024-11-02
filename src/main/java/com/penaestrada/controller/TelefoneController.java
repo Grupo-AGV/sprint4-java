@@ -43,6 +43,7 @@ public class TelefoneController {
     }
 
     @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response atualizarTelefone(@CookieParam(CookieName.TOKEN) String token, @QueryParam("id") Long id, CriarTelefoneDto dto) {
         if (id == null) {
