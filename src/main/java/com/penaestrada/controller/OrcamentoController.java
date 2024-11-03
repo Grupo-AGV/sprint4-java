@@ -115,13 +115,10 @@ public class OrcamentoController {
     }
 
     @POST
-    @Path("/service")
+    @Path("/{id}/service")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response criarServico(@CookieParam(CookieName.TOKEN) String token, @QueryParam("id") Long id, CriarServicoDto dto) {
-        if (id == null) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("error", "Id do orçamento não informado.")).build();
-        }
+    public Response criarServico(@CookieParam(CookieName.TOKEN) String token, @PathParam("id") Long id, CriarServicoDto dto) {
         try {
             String login = tokenService.getSubject(token);
             Usuario usuario = usuarioService.findByLogin(login);
